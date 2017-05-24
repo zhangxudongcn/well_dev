@@ -2,6 +2,7 @@
 #include "lcapplication.h"
 #include "lcmodel.h"
 #include "lcmainwindow.h"
+#include "ai_data_include.h"
 LCApplication *lcApp()
 {
 	return(LCApplication*)qApp;
@@ -9,14 +10,14 @@ LCApplication *lcApp()
 
 LCApplication::LCApplication(int &argc, char **argv) : QApplication( argc, argv ), _lc_mainwindow( nullptr )
 {
-	_lc_model = new LCModel();
+	_project = new aiDataProject();
+	_project->GetItem(aiData::DT_WELL_GROUP, "well_group", true);
 	_lc_mainwindow = new LCMainWindow();
 	_lc_mainwindow->show();
 }
 
 LCApplication::~LCApplication()
 {
-	delete _lc_model;
 }
 
 void LCApplication::setMainWindow(LCMainWindow *mw)

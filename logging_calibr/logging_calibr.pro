@@ -6,7 +6,7 @@ TEMPLATE = app
 TARGET = logging_calibr
 INCLUDEPATH += .
 CONFIG += debug
-QT += widgets charts datavisualization svg sql winextras xml xmlpatterns location help
+QT += widgets charts sql xml xmlpatterns help
 # Input
 HEADERS += lcapplication.h \
            lccurvetitle.h \
