@@ -2,6 +2,7 @@
 #include "lccurveitem.h"
 LCWellItem::LCWellItem(QGraphicsItem *parent, Qt::WindowFlags wFlags) : LCBaseItem(parent, wFlags)
 {
+	setLayout(new QGraphicsLinearLayout(this));
 }
 LCWellItem::~LCWellItem()
 {}
@@ -11,6 +12,7 @@ void LCWellItem::onUpdate(const LCUpdateNotifier &update_notifier)
 	if (_curve_vec.size() == 0) {
 	    for (int i = 0; i < 4; i++) {
 			LCCurveItem *curve_item = new LCCurveItem(this);
+			curve_item->setBackgroundBrush(Qt::red);
 			((QGraphicsLinearLayout*)layout())->addItem(curve_item);
 
 			_curve_vec.push_back( curve_item );

@@ -8,7 +8,6 @@ void LCScene::onUpdate(const LCUpdateNotifier &update_notifier)
 	setSceneRect(QRectF(0, 0, 1000, 1000));
 	if (_well_item == nullptr) {
 		_well_item = new LCWellItem();
-		_well_item->setLayout(new QGraphicsLinearLayout(_well_item));
 		addItem(_well_item);
 	}
 	_well_item->onUpdate(update_notifier);
