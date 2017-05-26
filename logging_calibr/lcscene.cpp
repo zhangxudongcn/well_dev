@@ -5,7 +5,22 @@
 
 void LCScene::onUpdate(const LCUpdateNotifier &update_notifier)
 {
-	setSceneRect(QRectF(0, 0, 1000, 1000));
+	//setSceneRect(QRectF(0, 0, 1000, 1000));
+#if 0
+	QGraphicsWidget *a = new QGraphicsWidget();
+	QGraphicsLinearLayout *layout = new QGraphicsLinearLayout();
+	QChart *aa = new QChart();
+	aa->resize(100, 100);
+	aa->setBackgroundBrush(Qt::red);
+	layout->addItem(aa);
+	QChart *aaa = new QChart();
+	aaa->setBackgroundBrush(Qt::blue);
+	aaa->resize(100, 100);
+	layout->addItem(aaa);
+	a->setLayout(layout);
+	addItem(a);
+	return;
+#endif
 	if (_well_item == nullptr) {
 		_well_item = new LCWellItem();
 		addItem(_well_item);
