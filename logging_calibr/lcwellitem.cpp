@@ -25,5 +25,6 @@ void LCWellItem::onUpdate(const LCUpdateNotifier &update_notifier)
 		series->append(7, 4);
 		series->append(10, 5);
 		item->addSeries(series);
+		item->createDefaultAxes();
 	}
 }
