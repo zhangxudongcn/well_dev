@@ -1,20 +1,23 @@
 #include "stdafx.h"
 #include "lcscene.h"
-#include "lcmodel.h"
 #include "lcapplication.h"
-#include "lcwelldata.h"
-#include <QtCharts>
-#include "ai_data_include.h"
+#include "lcwellitem.h"
 
-QT_CHARTS_USE_NAMESPACE
-void LCScene::modelChanged()
+void LCScene::onUpdate(const LCUpdateNotifier &update_notifier)
 {
 	setSceneRect(QRectF(0, 0, 1000, 1000));
+	if (_well_item == nullptr) {
+		_well_item = new LCWellItem();
+		_well_item->setLayout(new QGraphicsLinearLayout(_well_item));
+		addItem(_well_item);
+	}
+	_well_item->onUpdate(update_notifier);
+	return;
+#if 0
 	aiDataProject *project = lcApp()->project();
-	aiDataRefer<aiDataWellGroup> well_group = (aiDataWellGroup*)project->GetItem(aiData::DT_WELL_GROUP, "well_group");
+	aiDataRefer<aiDataWellGroup> well_group = (aiDataWellGroup*)project->GetItem(aiData::DT_WELL_GROUP, "well_group", true);
 	aiDataRefer<aiDataWell> well = well_group->GetWell( "F02-1_logs" );
 	if( well == nullptr ) {}
-#if 0
 	LCWellData *well_data = lcApp()->lcModel()->wellData(0);
 
 	const QVector<LCSubLogData> &log_data = well_data->logData();

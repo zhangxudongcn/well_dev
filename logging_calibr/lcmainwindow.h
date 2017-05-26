@@ -1,9 +1,8 @@
 #pragma once
-
-#include <QtWidgets/QMainWindow>
+#include <QMainWindow>
 #include "ui_lcmainwindow.h"
-class QGraphicsView;
 class LCScene;
+class LCUpdateNotifier;
 class LCMainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -12,7 +11,7 @@ public:
 	LCMainWindow(QWidget *parent = Q_NULLPTR);
 	virtual ~LCMainWindow();
 	QGraphicsView *lcView() const;
-    virtual void modelChanged();
+    virtual void onUpdate( const LCUpdateNotifier &update_notifier );
 protected slots:
 	void fileOpenSlot();
 

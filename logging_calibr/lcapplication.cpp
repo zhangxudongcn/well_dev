@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "lcapplication.h"
-#include "lcmodel.h"
 #include "lcmainwindow.h"
 #include "ai_data_include.h"
 LCApplication *lcApp()
@@ -11,7 +10,8 @@ LCApplication *lcApp()
 LCApplication::LCApplication(int &argc, char **argv) : QApplication( argc, argv ), _lc_mainwindow( nullptr )
 {
 	_project = new aiDataProject();
-	_project->GetItem(aiData::DT_WELL_GROUP, "well_group", true);
+	_project->Load("H:/workspace/well_test");
+	//_project->GetItem(aiData::DT_WELL_GROUP, "well_group", true);
 	_lc_mainwindow = new LCMainWindow();
 	_lc_mainwindow->show();
 }
@@ -26,8 +26,7 @@ void LCApplication::setMainWindow(LCMainWindow *mw)
 		_lc_mainwindow = mw;
 	}
 }
-
-void LCApplication::modelChanged()
+void LCApplication::onUpdate(const LCUpdateNotifier &update_notifier)
 {
-    _lc_mainwindow->modelChanged();
+	_lc_mainwindow->onUpdate(update_notifier);
 }

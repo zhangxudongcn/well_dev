@@ -1,12 +1,9 @@
 #include "stdafx.h"
 #include "lcapplication.h"
 #include "lcmainwindow.h"
-#include "lcmodel.h"
-#include "lcwelldata.h"
 #include "lcscene.h"
-#include <QFileDialog>
-#include <QtWidgets>
-#include <ai_data_include.h>
+#include "lcupdatenotifier.h"
+#include <QGraphicsView>
 LCMainWindow::LCMainWindow(QWidget *parent)
 	: QMainWindow(parent)
 {
@@ -27,20 +24,19 @@ LCMainWindow::~LCMainWindow()
 
 void LCMainWindow::fileOpenSlot()
 {	
-	QString file_name = QFileDialog::getOpenFileName(this, tr("Open File") );
-	aiDataProject *project = lcApp()->project();
-	aiDataRefer<aiDataWellGroup> well_group = (aiDataWellGroup*)project->GetItem(aiData::DT_WELL_GROUP, "well_group");
-	aiDataRefer<aiDataWell> well = well_group->GetWell( file_name, true );
-	modelChanged();
+	onUpdate(LCUpdateNotifier());
+	return;
 	/*
+	aiDataProject *project = lcApp()->project();
+	aiDataRefer<aiDataWellGroup> well_group = (aiDataWellGroup*)project->GetItem(aiData::DT_WELL_GROUP, "WellGroup1");
+	aiDataRefer<aiDataWell> well = well_group->GetWell( "F02-1" );
 	qDebug("file name is %s", file_name.toStdString().c_str());
 	LCWellData *w_data = new LCWellData();
 	w_data->loadFromLasFile(file_name);
 	lcApp()->lcModel()->addWell(w_data);
 	*/
 }
-
-void LCMainWindow::modelChanged()
+void LCMainWindow::onUpdate(const LCUpdateNotifier &update_notifier)
 {
-	_lc_scene->modelChanged();
+	_lc_scene->onUpdate(update_notifier);
 }

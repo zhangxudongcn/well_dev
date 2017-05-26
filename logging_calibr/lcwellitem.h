@@ -1,17 +1,13 @@
 #pragma once
-#include <QGraphicsWidget>
-class LCWellData;
-class LCWellItem : public QGraphicsWidget {
+#include "lcbaseitem.h"
+#include <QVector>
+class LCUpdateNotifier;
+class LCCurveItem;
+class LCWellItem : public LCBaseItem {
 public:
 	LCWellItem(QGraphicsItem *parent = Q_NULLPTR, Qt::WindowFlags wFlags = Qt::WindowFlags());
 	~LCWellItem();
-	const LCWellData *wellData() const {
-		return _well_data;
-	};
-	void setWellData( LCWellData *well_data);
-protected:
-	void setCurveItems();
+	void onUpdate(const LCUpdateNotifier &update_notifier) override;
 private:
-	LCWellData *_well_data;
-
+	QVector<LCCurveItem*> _curve_vec;
 };

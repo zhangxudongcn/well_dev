@@ -1,11 +1,12 @@
 #pragma once
-#include <QGraphicsWidget>
-class LCSubLogData;
-class LCCurveItem :	public QGraphicsWidget
+#include "lcbaseitem.h"
+class LCWellItem;
+class LCUpdateNotifier;
+class LCCurveItem :	public LCBaseItem
 {
 public:
-	LCCurveItem(QGraphicsItem *parent = Q_NULLPTR, Qt::WindowFlags wFlags = Qt::WindowFlags());
+	LCCurveItem( LCWellItem *well_item, Qt::WindowFlags wFlags = Qt::WindowFlags());
 	virtual ~LCCurveItem();
-	void setCurveData( const LCSubLogData &sub_log_data);
+	void onUpdate( const LCUpdateNotifier &update_notifier ) override;
 };
 
