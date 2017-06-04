@@ -1,7 +1,11 @@
 #pragma once
-class LC {
+class LCMainWindow;
+class aiDataWellGroup;
+class LCENV {
 public:
-	enum WrapType { OneLine = 0, MultiLine = 1 };
-    enum ModelChangeFlag { CurrentWellChanged = 0x1
-    };
-}; 
+    enum DataChangeFlag { CurrentWellChanged = 0x1,SyntheticChanged = 0x2 };
+	static int PixelPerCm;
+	static LCMainWindow *MW;
+	static aiDataWellGroup *WellData;
+	static double DefaultTitleHeightCM;
+};

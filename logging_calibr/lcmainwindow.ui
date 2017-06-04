@@ -13,32 +13,7 @@
   <property name="windowTitle">
    <string>LCMainWindow</string>
   </property>
-  <widget class="QWidget" name="_central_widget">
-   <layout class="QHBoxLayout" name="horizontalLayout">
-    <property name="spacing">
-     <number>0</number>
-    </property>
-    <property name="leftMargin">
-     <number>0</number>
-    </property>
-    <property name="topMargin">
-     <number>0</number>
-    </property>
-    <property name="rightMargin">
-     <number>0</number>
-    </property>
-    <property name="bottomMargin">
-     <number>0</number>
-    </property>
-    <item>
-     <layout class="QHBoxLayout" name="_h_layout">
-      <property name="spacing">
-       <number>0</number>
-      </property>
-     </layout>
-    </item>
-   </layout>
-  </widget>
+  <widget class="QWidget" name="_central_widget"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
@@ -62,7 +37,7 @@
     <enum>TopToolBarArea</enum>
    </attribute>
    <attribute name="toolBarBreak">
-    <bool>true</bool>
+    <bool>false</bool>
    </attribute>
   </widget>
   <widget class="QStatusBar" name="statusBar"/>
