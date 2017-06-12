@@ -1,9 +1,9 @@
-#include "lccurvetitle.h"
+#include "lctopstitle.h"
 #include "lcmainwindow.h"
 #include "lcdefine.h"
 #include <QLabel>
 #include <QVBoxLayout>
-LCCurveTitle::LCCurveTitle(QWidget *parent) : QWidget(parent)
+LCTopsTitle::LCTopsTitle(QWidget *parent) : QWidget(parent)
 {
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	QSettings &options = LCENV::MW->lcOptions();
@@ -12,5 +12,15 @@ LCCurveTitle::LCCurveTitle(QWidget *parent) : QWidget(parent)
 	layout->addWidget(new QLabel("Title", this));
 	setLayout(layout);
 }
-LCCurveTitle::~LCCurveTitle()
+LCTopsTitle::~LCTopsTitle()
 {}
+
+
+void LCTopsTitle::onUpdate(const LCUpdateNotifier &update_notifier)
+{
+
+}
+void LCTopsTitle::optionsChanged()
+{
+
+}

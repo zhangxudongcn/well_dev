@@ -12,13 +12,16 @@
 #include "lcrulerwidget.h"
 #include "lcrulertitle.h"
 #include "lcwellmainwidget.h"
+#include "ai_data_include.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QLabel>
 #include <QPushButton>
 #include <QScrollBar>
+#include "ai_data_include.h"
+
 LCMainWindow::LCMainWindow(QWidget *parent)
-	: QMainWindow(parent), _lc_options("LC", "ZXD"), _global_label(nullptr), _well_main_widget(nullptr)
+	: QMainWindow(parent), _lc_options("LC", "ZXD"), _global_label(nullptr), _well_main_widget(nullptr), _lc_data( nullptr )
 {
 	LCENV::MW = this;
 	ui.setupUi(this);
@@ -59,12 +62,12 @@ void LCMainWindow::resetWidget()
 
 void LCMainWindow::fileOpenSlot()
 {	
-	aiDataWellGroup well_group;
-	_well_data = well_group.GetWell("well");
-	LCUpdateNotifier notifier;
-	notifier.setDataChangedFlag(LCENV::CurrentWellChanged);
-	onUpdate( notifier );
-	return;
+	_lc_data = new LCData();
+	if (_lc_data->setWorkData("H:/workspace/well_test/Project1.paip", "WellGroup1", "F02-1", "Survey1", "F3", 2000)) {
+		LCUpdateNotifier notifier;
+		notifier.setDataChangedFlag(LCENV::CurrentWellChanged);
+		onUpdate(notifier);
+	}
 }
 void LCMainWindow::onUpdate(const LCUpdateNotifier &update_notifier)
 {
@@ -81,7 +84,27 @@ void LCMainWindow::optionsChanged()
 void LCMainWindow::setDefaultOptions()
 {
 	_lc_options.setValue("GlobalTitleHeight", 2.);
-	_lc_options.setValue("WorkTitleHeight", 2.5);
-	_lc_options.setValue("RulerWidth", 3.);
-	_lc_options.setValue("CurveWidth", 3.);
+	_lc_options.setValue("WorkTitleHeight", 4);
+	_lc_options.setValue("TimeAxisExt", 0.4); /* s */
+
+	_lc_options.setValue("Ruler/RulerWidth", 3.);
+
+	_lc_options.setValue("Tops/TopsWidth", 2.);
+
+	_lc_options.setValue("Curve/CurveWidth", 3.);	
+	_lc_options.setValue("Curve/CurveRangeExt", 0.05);
+
+	_lc_options.setValue("Seismic/DrawWiggle", true);
+	_lc_options.setValue("Seismic/FillWiggle", 1);
+	_lc_options.setValue("Seismic/TracesPerCM", 10);
+	_lc_options.setValue("Seismic/MSPerCM", 100);
+	_lc_options.setValue("Seismic/MaxExtTrace", 1.5);
+
+	_lc_options.setValue("Synthetic/TraceNum", 20);
+	_lc_options.setValue("Synthetic/Gap", 2);
+	_lc_options.setValue("Synthetic/Margin", 0.5);
+
+	_lc_options.setValue("WellSeismic/TraceNum", 5);
+	_lc_options.setValue("WellSeismic/Margin", 0.5);
+
 }

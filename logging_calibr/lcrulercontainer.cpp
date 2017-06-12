@@ -8,9 +8,8 @@
 #include <QVBoxLayout>
 #include <QScrollBar>
 #include <QSize>
-#define DefaultRulerWidthCM 2.0
 LCRulerContainer::LCRulerContainer(Qt::Alignment align, QWidget *parent) 
-	: QWidget(parent), _align( align ), _width_cm(DefaultRulerWidthCM)
+	: QWidget(parent), _align( align )
 {
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 	_title_widget = new LCRulerTitle(this);
@@ -19,8 +18,7 @@ LCRulerContainer::LCRulerContainer(Qt::Alignment align, QWidget *parent)
 
 	_name_widget->setAlignment(Qt::AlignCenter);
 
-	QSettings &options = LCENV::MW->lcOptions();
-	int ruler_width_pixel = options.value("RulerWidth").toFloat() * LCENV::PixelPerCm;
+	int ruler_width_pixel = widthCM() * LCENV::PixelPerCM;
 	if (_ruler_widget->verticalScrollBarPolicy() != Qt::ScrollBarAlwaysOff) {
 		setFixedWidth( ruler_width_pixel + 20 );
 	}
@@ -44,13 +42,16 @@ LCRulerContainer::LCRulerContainer(Qt::Alignment align, QWidget *parent)
 LCRulerContainer::~LCRulerContainer()
 {
 }
-void LCRulerContainer::setWidthCM(double width)
+float LCRulerContainer::widthCM() const
 {
-	_width_cm = width;
+	QSettings &options = LCENV::MW->lcOptions();
+	float ruler_width_cm = options.value("Ruler/RulerWidth").toFloat();
+	return ruler_width_cm;
 }
 
 void LCRulerContainer::onUpdate(const LCUpdateNotifier &update_notifier)
 {
+	_title_widget->onUpdate(update_notifier);
 	_ruler_widget->onUpdate(update_notifier);
 }
 

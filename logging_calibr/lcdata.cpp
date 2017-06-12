@@ -1,57 +1,113 @@
 #include "lcdata.h"
 #include "lcdefine.h"
+#include "lcalgorithm.h"
+#include "lcmainwindow.h"
 #include <QFile>
 #include <QTextStream>
+#include "ai_data_include.h"
 
-aiDataWell::aiDataWell( const QString &name ) : _well_name(name)
+LCData::LCData() : _project(nullptr), _well_group(nullptr), _well_data(nullptr), _survey(nullptr), _seis_data(nullptr), _replace_velocity(-1)
 {
-	_curve_names << "DEPTH" << "RHOB" << "DT" << "GR.API" << "AI" << "AI_rel" << "PHIE";
+}
+LCData::~LCData()
+{
+}
+void LCData::reset()
+{
+	if (_seis_data != nullptr) {
+		_seis_data->UnUsed();
+		delete _seis_data;
+		_seis_data = nullptr;
+	}
+	if (_survey != nullptr) {
+		_survey->UnUsed();
+		delete _survey;
+		_survey = nullptr;
+	}
+	if (_well_data != nullptr) {
+		_well_data->UnUsed();
+		delete _well_data;
+		_well_data = nullptr;
+	}
+	if (_well_group != nullptr) {
+		delete _well_group;
+		_well_group = nullptr;
+	}
+	if ( _project != nullptr) {
+		delete _project;
+		_project = nullptr;
+	}
+}
 
-	_curves.resize(_curve_names.size());
+bool LCData::setWorkData(const QString &pname, const QString &well_group_name, const QString &well_name, const QString &survey_name, const QString &seis_name, float replace_velocity)
+{
+	_project = aiDataServer::OpenProject( pname );
+	if (_project == nullptr) { return false; }
 
-	QFile log_file("H:\\workspace\\well_data.txt");
-	log_file.open(QIODevice::ReadOnly);
-	QTextStream t_out(&log_file);
-	for (;;) {
-		QString line = t_out.readLine();
-		if (line.isNull()) {
+	_well_group = (aiDataWellGroup*)(_project->GetItem(aiData::DT_WELL_GROUP, well_group_name));
+	if (_well_group == nullptr) { return false; }
+
+	_well_data = _well_group->GetWell( well_name );
+	if (_well_data == nullptr) { return false; }
+	_well_data->Use();
+
+	_survey = (aiDataSurvey*)(_project->GetItem(aiData::DT_SURVEY, survey_name));
+	if (_survey == nullptr) { return false;	}
+	_survey->Use();
+
+	_seis_data = (aiDataSeismic*)(_survey->GetItem(aiData::DT_SEISMIC, seis_name));
+	if (_seis_data == nullptr) { return false; }
+	_seis_data->Use();
+
+	_replace_velocity = replace_velocity;
+	/* get default time-depth curve */
+	QVector<float> depth_vector = _well_data->GetDepth();
+	QVector<float> sonic_vector = fillInvalid( _well_data->GetCurve("DT") );
+
+	_time_depth_curve = depthToTime(depth_vector, sonic_vector, replace_velocity);
+
+	QSettings &options = LCENV::MW->lcOptions();
+	float time_ext = options.value("TimeAxisExt").toFloat();
+	_time_min = 0.0f;
+	_time_max = _time_depth_curve.first.back() + time_ext;
+	return true;
+}
+float LCData::getTime(float depth) const
+{
+	QVector<float> time_vector = _time_depth_curve.first;
+	QVector<float> depth_vector = _time_depth_curve.second;
+
+	float time = LCENV::InvalidTime;
+	for (int index = 0; index < depth_vector.size(); index++) {
+		if (depth_vector[index] >= depth) {
+			if (index > 0) {
+				float scale = (depth - depth_vector[index - 1]) / (depth_vector[index] - depth_vector[index - 1]);
+				time = time_vector[index - 1] + scale * (time_vector[index] - time_vector[index - 1]);
+			}
+			else {
+				time = time_vector.first();
+			}
 			break;
 		}
-		QStringList s_list = line.split(' ', QString::SkipEmptyParts);
-		for (int i = 0; i < _curve_names.size(); i++) {
-			_curves[i].push_back(s_list[i].toFloat());
+	}
+	return time;
+}
+float LCData::getDepth(float time) const
+{
+	QVector<float> time_vector = _time_depth_curve.first;
+	QVector<float> depth_vector = _time_depth_curve.second;
+	float depth = LCENV::InvalidTime;
+	for (int index = 0; index < time_vector.size(); index++) {
+		if (time_vector[index] >= time) {
+			if (index > 0) {
+				float scale = (time - time_vector[index - 1]) / (time_vector[index] - time_vector[index - 1]);
+				depth = depth_vector[index - 1] + scale * (depth_vector[index] - depth_vector[index - 1]);
+			}
+			else {
+				depth = depth_vector.first();
+			}
+			break;
 		}
 	}
-	log_file.close();
-}
-aiDataWell::~aiDataWell()
-{
-
-}
-QVector<float> aiDataWell::GetCurve(const QString& sName) const
-{
-	int index = _curve_names.indexOf(sName);
-	return GetCurve(index);
-}
-
-
-QVector<float> aiDataWell::GetCurve(int index) const
-{
-	return _curves[index];
-}
-QStringList aiDataWell::GetCurveNames() const
-{
-	QStringList result;
-	result << "DEPTH" << "RHOB" << "DT" << "GR.API" << "AI" << "AI_rel" << "PHIE";
-	return result;
-}
-
-aiDataWellGroup::aiDataWellGroup() : _data_well(nullptr)
-{
-	LCENV::WellData = this;
-	_data_well = new aiDataWell( "F0" );
-}
-aiDataWell* aiDataWellGroup::GetWell(const QString& sName, bool bAutoCreate )
-{
-	return _data_well;
+	return depth;
 }

@@ -8,8 +8,7 @@ class LCCurveContainer : public QWidget {
 public:
 	LCCurveContainer(QWidget *parent = Q_NULLPTR);
 	~LCCurveContainer();
-	double widthCM() const { return _width_cm; }
-	virtual void setWidthCM(double width);
+	float widthCM() const;
 	const QString &curveName() const { return _curve_name; }
 	LCCurveTitle *curveTitle() const { return _curve_title; }
 	LCCurveWidget *curveWidget() const { return _curve_widget; }
@@ -19,7 +18,6 @@ public:
 	virtual void setCurve( const QString &curve_name);
 private:
 	QString _curve_name;
-	double _width_cm;
 	LCCurveTitle *_curve_title;
 	LCCurveWidget *_curve_widget;
 	QLabel *_name_widget;

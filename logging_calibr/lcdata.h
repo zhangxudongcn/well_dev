@@ -3,29 +3,41 @@
 #include <QString>
 #include <QMap>
 #include <QStringList>
-class aiDataWell {
+#include <QRgb>
+#include <QPointF>
+#include <QPair>
+class aiDataProject;
+class aiDataWellGroup;
+class aiDataWell;
+class aiDataSeismic;
+class aiDataSurvey;
+class LCData {
 public:
-	aiDataWell( const QString &name );
-	~aiDataWell();
-	QString wellName() const { return _well_name; }
-	QVector<float> GetCurve(const QString& sName) const;
-	QVector<float> GetCurve( int index ) const;
-	QStringList GetCurveNames() const;
-	double nullValue() const { return -999.2500; }
+	LCData();
+	virtual ~LCData();
+	bool setWorkData(const QString &pname, const QString &well_group_name, const QString &well_name, 
+		const QString &survey_name, const QString &seis_name, float replace_velocity );
+	aiDataProject *project() const { return _project; }
+	aiDataWellGroup *wellGroup() const { return _well_group; }
+	aiDataWell *wellData() const { return _well_data; }
+	aiDataSurvey *survey() const { return _survey; }
+	aiDataSeismic *seismicData() const { return _seis_data; }
+	float replaceVelocity() const { return _replace_velocity; }
+	QPair<QVector<float>, QVector<float>> timeDepthCurve() const { return _time_depth_curve; }	
+	void setTimeDepthCurve( QPair<QVector<float>, QVector<float>> curve ) { _time_depth_curve = curve; }
+	float getTime(float depth) const;
+	float getDepth(float time) const;
+	float timeMin() const { return _time_min; }
+	float timeMax() const { return _time_max; }
+protected:
+	void reset();
 private:
-	QString _well_name;
-	QStringList _curve_names;
-	QVector<QVector<float>> _curves;
-};
-class aiDataWellGroup {
-public:
-	aiDataWellGroup();
-	aiDataWell* GetWell(const QString& sName, bool bAutoCreate = false);
-private:
-	aiDataWell *_data_well;
-};
-class aiDataSeismic {
-public:
-	aiDataSeismic() {};
-	~aiDataSeismic() {};
+	aiDataProject *_project;
+	aiDataWellGroup *_well_group;
+	aiDataWell *_well_data;
+	aiDataSurvey *_survey;
+	aiDataSeismic *_seis_data;
+	float _replace_velocity;
+	QPair<QVector<float>, QVector<float>> _time_depth_curve; /* s, m*/
+	float _time_min, _time_max;
 };

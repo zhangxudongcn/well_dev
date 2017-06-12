@@ -23,7 +23,7 @@ LCWellMainWidget::LCWellMainWidget(QWidget *parent) : QWidget(parent)
 
 	_ruler_layout = new QHBoxLayout();
 	_left_ruler = new LCRulerContainer(Qt::AlignLeft, this);
-	_left_ruler->titleWidget()->setTitleText("Time(ms)");
+	_left_ruler->titleWidget()->setTitleText("Depth(m)");
 	_ruler_layout->addWidget(_left_ruler);
 
 	_work_container = new LCWorkContainer(this);
@@ -31,7 +31,7 @@ LCWellMainWidget::LCWellMainWidget(QWidget *parent) : QWidget(parent)
 
 	_right_ruler = new LCRulerContainer(Qt::AlignRight, this);
 	_right_ruler->rulerWidget()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-	_right_ruler->titleWidget()->setTitleText("TVD(m)\nFrom\nSurface");
+	_right_ruler->titleWidget()->setTitleText("Time(ms)");
 
 	_ruler_layout->addWidget(_right_ruler);
 
@@ -48,13 +48,14 @@ LCWellMainWidget::LCWellMainWidget(QWidget *parent) : QWidget(parent)
 	connect(_right_ruler->rulerWidget()->verticalScrollBar(), &QScrollBar::valueChanged,
 		_work_container, &LCWorkContainer::setDeviceYValue);
 }
-LCWellMainWidget::~LCWellMainWidget() {}
+LCWellMainWidget::~LCWellMainWidget() 
+{
+}
 void LCWellMainWidget::onUpdate(const LCUpdateNotifier &update_notifier)
 {
 	_left_ruler->onUpdate(update_notifier);
 	_work_container->onUpdate(update_notifier);
 	_right_ruler->onUpdate(update_notifier);
-
 }
 void LCWellMainWidget::optionsChanged()
 {}

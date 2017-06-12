@@ -1,5 +1,6 @@
 #include "lcdefine.h"
-int LCENV::PixelPerCm = 40;
+int LCENV::PixelPerCM = 50;
 LCMainWindow *LCENV::MW = nullptr;
-aiDataWellGroup *LCENV::WellData = nullptr;
-double LCENV::DefaultTitleHeightCM = 2.0;
+
+float LCENV::InvalidTime = -9999.f;
+float LCENV::InvalidDepth = -9999.f;

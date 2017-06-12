@@ -9,9 +9,8 @@ public:
 	LCRulerContainer(Qt::Alignment align, QWidget *parent = Q_NULLPTR);
 	~LCRulerContainer();
 	Qt::Alignment alignment() const { return _align; }
-	double widthCM() const { return _width_cm; }
-	virtual void setWidthCM(double width);
 
+	float widthCM() const;
 	LCRulerTitle *titleWidget() const { return _title_widget; }
 	LCRulerWidget *rulerWidget() const { return _ruler_widget; }
 	QLabel *nameWidget() const { return _name_widget; }

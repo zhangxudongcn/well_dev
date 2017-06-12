@@ -9,7 +9,8 @@ class QVBoxLayout;
 class QHBoxLayout;
 class QLabel;
 class LCWellMainWidget;
-class aiDataWell;
+class LCData;
+
 class LCMainWindow : public QMainWindow
 {
 	Q_OBJECT
@@ -19,6 +20,7 @@ public:
 	LCWellMainWidget *wellMainWidget() const { return _well_main_widget; }
 	virtual void onUpdate(const LCUpdateNotifier &update_notifier);
 	virtual void optionsChanged();
+	LCData *lcData() const { return _lc_data; }
 	QSettings &lcOptions() { return _lc_options; }
 protected:
 	void setDefaultOptions();
@@ -33,6 +35,6 @@ private:
 	QHBoxLayout *_global_h_layout;
 	QLabel *_global_label;
 	LCWellMainWidget *_well_main_widget;
-	aiDataWell *_well_data;
+	LCData *_lc_data;
 	QSettings _lc_options;
 };

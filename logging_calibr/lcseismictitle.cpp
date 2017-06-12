@@ -8,7 +8,7 @@ LCSeismicTitle::LCSeismicTitle(QWidget *parent) : QWidget(parent)
 {
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Fixed);
 	QSettings &options = LCENV::MW->lcOptions();
-	setFixedHeight(options.value("WorkTitleHeight").toFloat() * LCENV::PixelPerCm);
+	setFixedHeight(options.value("WorkTitleHeight").toFloat() * LCENV::PixelPerCM);
 	QVBoxLayout *layout = new QVBoxLayout();
 	layout->addWidget(new QLabel("Title", this));
 	setLayout(layout);

@@ -3,19 +3,19 @@
 #include "lccurvewidget.h"
 #include "lcupdatenotifier.h"
 #include "lcdefine.h"
+#include "lcmainwindow.h"
 #include <QLabel>
 #include <QVBoxLayout>
-#define DefaultCurveWidthCM 3.0
-LCCurveContainer::LCCurveContainer(QWidget *parent) 
-	: QWidget(parent), _width_cm(DefaultCurveWidthCM)
+LCCurveContainer::LCCurveContainer(QWidget *parent) : QWidget(parent)
 {
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
-	setFixedWidth(_width_cm * LCENV::PixelPerCm);
 	_curve_title = new LCCurveTitle(this);
 	_curve_widget = new LCCurveWidget(this);
 	_name_widget = new QLabel(this);
-
 	_name_widget->setAlignment(Qt::AlignCenter);
+
+	int curve_width_pixel = widthCM() * LCENV::PixelPerCM;
+	setFixedWidth(curve_width_pixel );
 
 	QVBoxLayout *layout = new QVBoxLayout();
 	layout->setContentsMargins(QMargins());
@@ -29,13 +29,16 @@ LCCurveContainer::~LCCurveContainer()
 {
 
 }
+float LCCurveContainer::widthCM() const
+{
+	QSettings &options = LCENV::MW->lcOptions();
+	float ruler_width_cm = options.value("Curve/CurveWidth").toFloat();
+	return ruler_width_cm;
+}
+
 void LCCurveContainer::setCurve(const QString &curve_name)
 {
 	_curve_name = curve_name;
-}
-void LCCurveContainer::setWidthCM(double width)
-{
-	_width_cm = width;
 }
 
 void LCCurveContainer::onUpdate(const LCUpdateNotifier &update_notifier)

@@ -1,5 +1,6 @@
 #pragma once
 #include <QGraphicsItemGroup>
+#include <QTransform>
 #include "lcgraphicsview.h"
 #include "lcvalueaxis.h"
 class LCCurveContainer;
@@ -27,6 +28,8 @@ public:
 
 	virtual void onUpdate(const LCUpdateNotifier &update_notifier);
 	virtual void optionsChanged();
+
+	QTransform mapToDeviceTransform() const { return _map_to_device_matrix; }
 private:
 	QGraphicsScene *_scene;
 	QString _curve_name;
@@ -37,5 +40,6 @@ private:
 	QGraphicsItemGroup *_curve_item_group;
 	QGraphicsItemGroup *_v_axis_item_group;
 	QGraphicsItemGroup *_h_axis_item_group;
+	QTransform _map_to_device_matrix;
 
 };

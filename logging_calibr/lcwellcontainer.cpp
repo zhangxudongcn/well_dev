@@ -4,11 +4,13 @@
 #include "lccurvecontainer.h"
 #include "lccurvewidget.h"
 #include "lcdefine.h"
+#include "lcmainwindow.h"
+#include "ai_data_include.h"
 #include <QHBoxLayout>
 #include <QScrollBar>
 
 LCWellContainer::LCWellContainer(QWidget *parent) 
-	: QWidget(parent), _title_height_cm(LCENV::DefaultTitleHeightCM)
+	: QWidget(parent)
 {
 	setSizePolicy(QSizePolicy::Fixed, QSizePolicy::Expanding);
 }
@@ -16,24 +18,17 @@ LCWellContainer::~LCWellContainer()
 {
 
 }
-double LCWellContainer::widthCM() const
+float LCWellContainer::widthCM() const
 {
-	double width = 0.;
-	for (const auto &item : _curves) {
-		width += item->widthCM();
-	}
-	return width;
+	QSettings &options = LCENV::MW->lcOptions();
+	return options.value("CurveWidth").toFloat() * _curves.size();
 }
 
-void LCWellContainer::setTitleHeightCM(double height)
-{
-	_title_height_cm = height;
-}
 
 void LCWellContainer::onUpdate(const LCUpdateNotifier &update_notifier)
 {
 	if (update_notifier.dataChangedFlag() | LCENV::CurrentWellChanged) {
-		aiDataWell *well_data = LCENV::WellData->GetWell("F0");
+		aiDataWell *well_data = LCENV::MW->lcData()->wellData();
 		// remove curve
 		for (auto &curve : _curves) {
 			delete curve;
