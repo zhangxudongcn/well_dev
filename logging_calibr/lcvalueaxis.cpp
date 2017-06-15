@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "lcvalueaxis.h"
 LCValueAxis::LCValueAxis()
 {

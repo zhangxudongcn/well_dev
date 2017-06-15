@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "lcrulertitle.h"
 #include "lcdefine.h"
 #include "lcmainwindow.h"

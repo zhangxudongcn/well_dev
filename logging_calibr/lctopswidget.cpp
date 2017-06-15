@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "lctopswidget.h"
 #include "lcdefine.h"
 #include "lcdata.h"

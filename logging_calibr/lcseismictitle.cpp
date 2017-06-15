@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "lcseismictitle.h"
 #include "lcupdatenotifier.h"
 #include "lcdefine.h"

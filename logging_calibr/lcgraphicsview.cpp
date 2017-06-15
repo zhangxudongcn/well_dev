@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "lcgraphicsview.h"
 
 LCGraphicsView::LCGraphicsView(QWidget *parent) : QGraphicsView(parent)

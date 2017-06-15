@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "lcdefine.h"
 int LCENV::PixelPerCM = 50;
 LCMainWindow *LCENV::MW = nullptr;

@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "lcsynthetictitle.h"
 #include "lcupdatenotifier.h"
 #include "lcdefine.h"

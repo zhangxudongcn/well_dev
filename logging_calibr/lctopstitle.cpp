@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "lctopstitle.h"
 #include "lcmainwindow.h"
 #include "lcdefine.h"

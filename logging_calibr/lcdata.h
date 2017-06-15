@@ -24,7 +24,7 @@ public:
 	aiDataSeismic *seismicData() const { return _seis_data; }
 	float replaceVelocity() const { return _replace_velocity; }
 	QPair<QVector<float>, QVector<float>> timeDepthCurve() const { return _time_depth_curve; }	
-	void setTimeDepthCurve( QPair<QVector<float>, QVector<float>> curve ) { _time_depth_curve = curve; }
+	void setTimeDepthCurve( const QPair<QVector<float>, QVector<float>> &curve);
 	float getTime(float depth) const;
 	float getDepth(float time) const;
 	float timeMin() const { return _time_min; }

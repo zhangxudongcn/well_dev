@@ -1,11 +1,12 @@
+#include "stdafx.h"
 #include <lcwaveletwidget.h>
 #include "lcalgorithm.h"
 
 LCWaveletWidget::LCWaveletWidget(QWidget *parent /* = Q_NULLPTR */)
 	: QChartView(new QChart(), parent)
 {
-	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
-	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOn);
+	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	chart()->setMargins(QMargins());
 }
 

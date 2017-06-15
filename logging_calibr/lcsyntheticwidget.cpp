@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "lcsyntheticwidget.h"
 #include "lcupdatenotifier.h"
 #include "lctraceitem.h"
@@ -35,8 +36,8 @@ void LCSyntheticWidget::onUpdate(const LCUpdateNotifier &update_notifier)
 
 		aiDataWell *well_data = LCENV::MW->lcData()->wellData();
 		QVector<float> depth_data = well_data->GetDepth();
-		QVector<float> sonic = fillInvalid( well_data->GetCurve( "DT" ) );
-		QVector<float> rhob = well_data->GetCurve("RHOB"); /* kg/m3 */
+		QVector<float> sonic = fillInvalid( well_data->GetSonic() );
+		QVector<float> rhob = well_data->GetDensity(); /* kg/m3 */
 
 		for (auto &item : rhob) {
 			if (isnan(item) == false) {
@@ -46,7 +47,7 @@ void LCSyntheticWidget::onUpdate(const LCUpdateNotifier &update_notifier)
 
 		QPair<QVector<float>,QVector<float>> time_depth_curve =  LCENV::MW->lcData()->timeDepthCurve();
 		//QVector<float> imped = impedance(sonic, rhob );
-		QVector<float> imped = fillInvalid( well_data->GetCurve( "AI" ) );
+		QVector<float> imped = fillInvalid( well_data->GetImpedance() );
 
 		QVector<float> refl = reflectivities(imped);
 		QVector<float> new_refl;

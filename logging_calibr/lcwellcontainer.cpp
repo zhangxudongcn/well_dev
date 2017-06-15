@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "lcwellcontainer.h"
 #include "lcdata.h"
 #include "lcupdatenotifier.h"

@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "lcrulerwidget.h"
 #include "lcvalueaxis.h"
 #include "lcdefine.h"

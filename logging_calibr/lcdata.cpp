@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "lcdata.h"
 #include "lcdefine.h"
 #include "lcalgorithm.h"
@@ -62,9 +64,9 @@ bool LCData::setWorkData(const QString &pname, const QString &well_group_name, c
 	_replace_velocity = replace_velocity;
 	/* get default time-depth curve */
 	QVector<float> depth_vector = _well_data->GetDepth();
-	QVector<float> sonic_vector = fillInvalid( _well_data->GetCurve("DT") );
+	QVector<float> sonic_vector = fillInvalid( _well_data->GetSonic() );
 
-	_time_depth_curve = depthToTime(depth_vector, sonic_vector, replace_velocity);
+	setTimeDepthCurve( depthToTime(depth_vector, sonic_vector, replace_velocity) );
 
 	QSettings &options = LCENV::MW->lcOptions();
 	float time_ext = options.value("TimeAxisExt").toFloat();
@@ -72,6 +74,11 @@ bool LCData::setWorkData(const QString &pname, const QString &well_group_name, c
 	_time_max = _time_depth_curve.first.back() + time_ext;
 	return true;
 }
+void LCData::setTimeDepthCurve( const QPair<QVector<float>, QVector<float>> &curve) 
+{ 
+	_time_depth_curve = curve; 
+}
+
 float LCData::getTime(float depth) const
 {
 	QVector<float> time_vector = _time_depth_curve.first;

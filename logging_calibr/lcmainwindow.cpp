@@ -81,6 +81,7 @@ void LCMainWindow::onUpdate(const LCUpdateNotifier &update_notifier)
 void LCMainWindow::optionsChanged()
 {
 }
+
 void LCMainWindow::setDefaultOptions()
 {
 	_lc_options.setValue("GlobalTitleHeight", 2.);
@@ -100,11 +101,11 @@ void LCMainWindow::setDefaultOptions()
 	_lc_options.setValue("Seismic/MSPerCM", 100);
 	_lc_options.setValue("Seismic/MaxExtTrace", 1.5);
 
-	_lc_options.setValue("Synthetic/TraceNum", 20);
-	_lc_options.setValue("Synthetic/Gap", 2);
+	_lc_options.setValue("Synthetic/TraceNum", 10);
+	_lc_options.setValue("Synthetic/Gap", 0.5);
 	_lc_options.setValue("Synthetic/Margin", 0.5);
 
-	_lc_options.setValue("WellSeismic/TraceNum", 5);
+	_lc_options.setValue("WellSeismic/TraceNum", 9);
 	_lc_options.setValue("WellSeismic/Margin", 0.5);
 
 }

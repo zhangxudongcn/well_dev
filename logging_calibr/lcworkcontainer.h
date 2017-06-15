@@ -16,7 +16,8 @@ public:
 public slots:
 	virtual void setDeviceYValue(int value);
 protected:
-	void resizeEvent(QResizeEvent *event) override;
+	void resizeEvent(QResizeEvent *event) override; 
+	bool eventFilter(QObject *obj, QEvent *event) override;
 private:
 	LCTopsContainer *_tops_container;
 	LCWellContainer *_well_container;

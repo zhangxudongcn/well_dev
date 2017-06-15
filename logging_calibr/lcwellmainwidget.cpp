@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "lcwellmainwidget.h"
 #include "lcupdatenotifier.h"
 #include "lcapplication.h"
@@ -15,7 +16,6 @@
 
 LCWellMainWidget::LCWellMainWidget(QWidget *parent) : QWidget(parent) 
 {
-
 	_global_v_layout = new QVBoxLayout();
 	_global_label = new QLabel(this);
 	_global_label->setText("GeoEast");
@@ -23,7 +23,7 @@ LCWellMainWidget::LCWellMainWidget(QWidget *parent) : QWidget(parent)
 
 	_ruler_layout = new QHBoxLayout();
 	_left_ruler = new LCRulerContainer(Qt::AlignLeft, this);
-	_left_ruler->titleWidget()->setTitleText("Depth(m)");
+	_left_ruler->titleWidget()->setTitleText("Time-Depth(m)");
 	_ruler_layout->addWidget(_left_ruler);
 
 	_work_container = new LCWorkContainer(this);
@@ -31,7 +31,7 @@ LCWellMainWidget::LCWellMainWidget(QWidget *parent) : QWidget(parent)
 
 	_right_ruler = new LCRulerContainer(Qt::AlignRight, this);
 	_right_ruler->rulerWidget()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-	_right_ruler->titleWidget()->setTitleText("Time(ms)");
+	_right_ruler->titleWidget()->setTitleText("Time-Time(ms)");
 
 	_ruler_layout->addWidget(_right_ruler);
 
@@ -47,6 +47,9 @@ LCWellMainWidget::LCWellMainWidget(QWidget *parent) : QWidget(parent)
 		_left_ruler->rulerWidget()->verticalScrollBar(), &QScrollBar::setValue);
 	connect(_right_ruler->rulerWidget()->verticalScrollBar(), &QScrollBar::valueChanged,
 		_work_container, &LCWorkContainer::setDeviceYValue);
+
+	connect(_work_h_scrollbar, &LCScrollBar::valueChanged,
+		_work_container->horizontalScrollBar(), &QScrollBar::setValue);
 }
 LCWellMainWidget::~LCWellMainWidget() 
 {
@@ -59,3 +62,18 @@ void LCWellMainWidget::onUpdate(const LCUpdateNotifier &update_notifier)
 }
 void LCWellMainWidget::optionsChanged()
 {}
+
+void LCWellMainWidget::resizeEvent(QResizeEvent *event)
+{
+	QWidget::resizeEvent(event);
+}
+
+void LCWellMainWidget::setWorkScrollBar()
+{
+	int work_container_width = workContainer()->width();
+	int scroll_widget_width = workContainer()->widget()->width();
+	LCScrollBar *_scroll_bar = workHScrollBar();
+	_scroll_bar->setMaximum(scroll_widget_width - work_container_width);
+	_scroll_bar->setMinimum(0);
+	_scroll_bar->setPageStep(work_container_width);
+}

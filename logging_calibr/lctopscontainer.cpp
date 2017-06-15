@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "lctopscontainer.h"
 #include "lctopstitle.h"
 #include "lctopswidget.h"

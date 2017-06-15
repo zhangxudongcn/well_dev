@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "lctopitem.h"
 #include "lcmainwindow.h"
 #include "lcdata.h"

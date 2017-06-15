@@ -1,3 +1,5 @@
+#include "stdafx.h"
+
 #include "lcseismiccontainer.h"
 #include "lcupdatenotifier.h"
 #include "lcseismictitle.h"

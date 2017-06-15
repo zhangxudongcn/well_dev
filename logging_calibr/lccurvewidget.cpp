@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "lccurvewidget.h"
 #include "lcdefine.h"
 #include "lcdata.h"

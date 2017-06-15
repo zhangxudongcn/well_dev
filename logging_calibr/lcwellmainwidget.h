@@ -15,8 +15,12 @@ public:
 	LCRulerContainer *leftRuler() const { return _left_ruler; }
 	LCRulerContainer *rightRuler() const { return _right_ruler; }
 	LCWorkContainer *workContainer() const { return _work_container; }
+	LCScrollBar *workHScrollBar() const { return _work_h_scrollbar; }
 	virtual void onUpdate(const LCUpdateNotifier &update_notifier);
 	virtual void optionsChanged();
+	void setWorkScrollBar();
+protected:
+	virtual void resizeEvent(QResizeEvent *event) override;
 private:
 	QVBoxLayout *_global_v_layout;
 	QLabel *_global_label;

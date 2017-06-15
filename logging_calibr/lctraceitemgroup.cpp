@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "lctraceitemgroup.h"
 #include "lctraceitem.h"
 #include "lcmainwindow.h"

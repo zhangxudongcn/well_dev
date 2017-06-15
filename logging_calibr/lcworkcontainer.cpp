@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "lcworkcontainer.h"
 #include "lctopscontainer.h"
 #include "lctopswidget.h"
@@ -8,6 +9,8 @@
 #include "lcseismicwidget.h"
 #include "lcupdatenotifier.h"
 #include "lcdefine.h"
+#include "lcmainwindow.h"
+#include "lcwellmainwidget.h"
 #include <QHBoxLayout>
 #include <QResizeEvent>
 #include <QScrollBar>
@@ -15,7 +18,7 @@ LCWorkContainer::LCWorkContainer(QWidget *parent)
 	: QScrollArea(parent)
 {	
 	setSizePolicy(QSizePolicy::Expanding, QSizePolicy::Expanding);
-	//setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
+	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 
 	QWidget *scroll_widget = new QWidget(this);	
@@ -36,6 +39,7 @@ LCWorkContainer::LCWorkContainer(QWidget *parent)
 	layout->addWidget(_xl_seismic_container);
 	scroll_widget->setLayout(layout);
 	setWidget(scroll_widget);
+	widget()->installEventFilter(this);
 }
 LCWorkContainer::~LCWorkContainer()
 {
@@ -69,6 +73,7 @@ void LCWorkContainer::optionsChanged()
 void LCWorkContainer::resizeEvent(QResizeEvent *event)
 {
 	widget()->setFixedHeight(height());
+	LCENV::MW->wellMainWidget()->setWorkScrollBar();
 }
 
 void LCWorkContainer::setDeviceYValue(int value)
@@ -78,4 +83,12 @@ void LCWorkContainer::setDeviceYValue(int value)
 	_synthetic_container->syntheticWidget()->verticalScrollBar()->setValue(value);
 	_il_seismic_container->seismicWidget()->verticalScrollBar()->setValue(value);
 	_xl_seismic_container->seismicWidget()->verticalScrollBar()->setValue(value);
+}
+
+bool LCWorkContainer::eventFilter(QObject *obj, QEvent *event)
+{
+	if (event->type() == QEvent::Resize && obj == widget()) {
+		LCENV::MW->wellMainWidget()->setWorkScrollBar();
+	}
+	return QObject::eventFilter(obj, event);
 }

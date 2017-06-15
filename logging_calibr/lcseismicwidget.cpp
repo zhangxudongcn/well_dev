@@ -1,3 +1,4 @@
+#include "stdafx.h"
 #include "lcseismicwidget.h"
 #include "lcupdatenotifier.h"
 #include "lctraceitem.h"
