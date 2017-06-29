@@ -6,6 +6,7 @@
 #include <QRgb>
 #include <QPointF>
 #include <QPair>
+#include <QPolygonF>
 class aiDataProject;
 class aiDataWellGroup;
 class aiDataWell;
@@ -29,6 +30,7 @@ public:
 	float getDepth(float time) const;
 	float timeMin() const { return _time_min; }
 	float timeMax() const { return _time_max; }
+	QVector<QPair<QVector<float>, QVector<float>>> wellSeismic(int il_num, int xl_num);
 protected:
 	void reset();
 private:

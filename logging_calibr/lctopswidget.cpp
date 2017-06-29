@@ -22,7 +22,7 @@ LCTopsWidget::LCTopsWidget(QWidget *parent)
 
 void LCTopsWidget::onUpdate(const LCUpdateNotifier &update_notifier)
 {
-	if (update_notifier.dataChangedFlag() | LCENV::CurrentWellChanged) {
+	if (update_notifier.dataChangedFlag() & LCENV::CurrentWellChanged) {
 		QPair<QVector<float>, QVector<float>> time_depth_curve = LCENV::MW->lcData()->timeDepthCurve();
 		QSettings &options = LCENV::MW->lcOptions();
 		float ms_per_cm = options.value("Seismic/MSPerCM").toFloat();

@@ -46,6 +46,7 @@ void LCCurveContainer::onUpdate(const LCUpdateNotifier &update_notifier)
 {
 	_curve_widget->onUpdate(update_notifier);
 	_name_widget->setText(_curve_name);
+	_curve_title->onUpdate(update_notifier);
 }
 
 void LCCurveContainer::optionsChanged()

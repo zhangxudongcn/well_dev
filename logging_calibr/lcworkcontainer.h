@@ -22,5 +22,5 @@ private:
 	LCTopsContainer *_tops_container;
 	LCWellContainer *_well_container;
 	LCSyntheticContainer *_synthetic_container;
-	LCSeismicContainer *_il_seismic_container, *_xl_seismic_container;
+	LCSeismicContainer *_seismic_container;
 };

@@ -13,6 +13,7 @@
 #include "lcdefine.h"
 #include "lcrulerwidget.h"
 #include "lcrulertitle.h"
+#include "lclineardepthaxis.h"
 
 LCWellMainWidget::LCWellMainWidget(QWidget *parent) : QWidget(parent) 
 {
@@ -23,15 +24,17 @@ LCWellMainWidget::LCWellMainWidget(QWidget *parent) : QWidget(parent)
 
 	_ruler_layout = new QHBoxLayout();
 	_left_ruler = new LCRulerContainer(Qt::AlignLeft, this);
-	_left_ruler->titleWidget()->setTitleText("Time-Depth(m)");
+	_left_ruler->rulerWidget()->setAxis(new LCLinearAxis(Qt::AlignLeft));
+	_left_ruler->titleWidget()->setTitleText("Time(ms)");
 	_ruler_layout->addWidget(_left_ruler);
 
 	_work_container = new LCWorkContainer(this);
 	_ruler_layout->addWidget(_work_container);
 
 	_right_ruler = new LCRulerContainer(Qt::AlignRight, this);
+	_right_ruler->rulerWidget()->setAxis(new LCLinearDepthAxis(Qt::AlignRight));
 	_right_ruler->rulerWidget()->setVerticalScrollBarPolicy(Qt::ScrollBarAsNeeded);
-	_right_ruler->titleWidget()->setTitleText("Time-Time(ms)");
+	_right_ruler->titleWidget()->setTitleText("Time-Depth(m)");
 
 	_ruler_layout->addWidget(_right_ruler);
 
@@ -56,8 +59,21 @@ LCWellMainWidget::~LCWellMainWidget()
 }
 void LCWellMainWidget::onUpdate(const LCUpdateNotifier &update_notifier)
 {
+	if (update_notifier.dataChangedFlag() & LCENV::CurrentWellChanged) {
+		_left_ruler->rulerWidget()->axis()->setRange(LCENV::MW->lcData()->timeMin() * 1000, LCENV::MW->lcData()->timeMax() * 1000);
+		double tick_min = (int(LCENV::MW->lcData()->timeMin() * 1000 / 100)) * 100;
+		double tick_max = (int(LCENV::MW->lcData()->timeMax() * 1000 / 100)) * 100;
+		_left_ruler->rulerWidget()->axis()->setTick(tick_min, tick_max, 100);
+	}
 	_left_ruler->onUpdate(update_notifier);
 	_work_container->onUpdate(update_notifier);
+	if (update_notifier.dataChangedFlag() & LCENV::CurrentWellChanged) {
+		QPair<QVector<float>, QVector<float>> time_depth_curve = LCENV::MW->lcData()->timeDepthCurve();
+		_right_ruler->rulerWidget()->axis()->setRange(LCENV::MW->lcData()->timeMin() * 1000, LCENV::MW->lcData()->timeMax() * 1000);
+		double tick_min = (int(time_depth_curve.second.first() / 100)) * 100;
+		double tick_max = (int(time_depth_curve.second.back() / 100)) * 100;
+		_right_ruler->rulerWidget()->axis()->setTick(tick_min, tick_max, 100);
+	}
 	_right_ruler->onUpdate(update_notifier);
 }
 void LCWellMainWidget::optionsChanged()

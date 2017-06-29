@@ -17,7 +17,7 @@ LCTraceItem::~LCTraceItem()
 
 }
 
-void LCTraceItem::setTraceData(const QPolygonF &trace_data)
+void LCTraceItem::setTraceData(const QPair<QVector<float>, QVector<float>> &trace_data)
 {
 	_trace_data = trace_data;
 
@@ -26,23 +26,19 @@ void LCTraceItem::setTraceData(const QPolygonF &trace_data)
 
 	QPainterPath wiggle_path;
 	if (draw_wiggle == true) {
-		wiggle_path.moveTo(trace_data.first());
-		for (const auto &p : trace_data) {
-			wiggle_path.lineTo(p);
+		wiggle_path.moveTo(trace_data.second.first(), trace_data.first.first());
+		for (int sample_index = 1; sample_index < trace_data.first.size(); sample_index++) {
+			wiggle_path.lineTo(trace_data.second[sample_index], trace_data.first[sample_index]);
 		}
 	}
 	//wiggle_path.translate(_pos.x(), 0);
-	_wiggle_item->setPen(QPen(Qt::black, 0));
+	_wiggle_item->setBrush(Qt::NoBrush );
 	_wiggle_item->setPath(wiggle_path);
 
 	int fill_wiggle = options.value("Seismic/FillWiggle").toInt();
+	float trace_ext_pixel = 1.0f / options.value("Seismic/TracesPerCM").toFloat() * options.value("Seismic/MaxExtTrace").toFloat() * LCENV::PixelPerCM;
 
-	QPainterPath fill_path;
-	fill_path.moveTo(0, trace_data.first().y());
-	for (const auto &p : trace_data) {
-		fill_path.lineTo(p);
-	}
-	fill_path.moveTo(0, trace_data.back().y());
+	QPainterPath fill_path = wiggle_path;
 
 	switch (fill_wiggle) {
 	case LCENV::FillPositive | LCENV::FillNegative: {
@@ -50,22 +46,22 @@ void LCTraceItem::setTraceData(const QPolygonF &trace_data)
 	}
 	case LCENV::FillPositive: {
 		QPainterPath clip_path;
-		clip_path.addRect(QRectF(0, trace_data.first().y(), 10, trace_data.back().y() - trace_data.first().y()));
+		clip_path.addRect(QRectF(0, trace_data.first.first(), trace_ext_pixel, trace_data.first.back() - trace_data.first.first()));
 		fill_path = fill_path.intersected(clip_path);
 		break;
 	}
 	case LCENV::FillNegative: {
 		QPainterPath clip_path;
-		clip_path.addRect(QRectF(-10, trace_data.first().y(), 10, trace_data.back().y() - trace_data.first().y()));
+		clip_path.addRect(QRectF(-trace_ext_pixel, trace_data.first.first(), trace_ext_pixel, trace_data.first.back() - trace_data.first.first()));
 		fill_path = fill_path.intersected(clip_path);
 		break;
 	}
 	default: {
 		fill_path = QPainterPath();
 	}
-	}
+	}	
+
 	_fill_item->setPen(Qt::NoPen);
-	_fill_item->setBrush(Qt::blue);
 	_fill_item->setPath(fill_path);
 }
 

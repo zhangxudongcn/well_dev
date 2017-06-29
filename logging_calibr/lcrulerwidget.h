@@ -2,6 +2,8 @@
 #include "lcgraphicsview.h"
 #include <QList>
 class LCValueAxis;
+class LCLinearAxis;
+class LCLinearAxis;
 class LCUpdateNotifier;
 class LCRulerContainer;
 class LCRulerWidget : public LCGraphicsView {
@@ -10,8 +12,8 @@ public:
 	~LCRulerWidget();
 	LCRulerContainer *container() const { (LCRulerContainer*)parent(); }
 	Qt::Alignment alignment() const { return _align; }
-	LCValueAxis *axis() const { return _axis; }
-	void setAxis(LCValueAxis *axis);
+	LCLinearAxis *axis() const { return _axis; }
+	void setAxis(LCLinearAxis *axis);
 	virtual void onUpdate(const LCUpdateNotifier &update_notifier);
 	virtual void optionsChanged();
 protected:
@@ -19,5 +21,5 @@ protected:
 private:
 	Qt::Alignment _align;
 	QGraphicsScene *_scene;
-	LCValueAxis *_axis;
+	LCLinearAxis *_axis;
 };

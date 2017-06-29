@@ -4,6 +4,7 @@
 #include "lcdefine.h"
 #include "lcalgorithm.h"
 #include "lcmainwindow.h"
+#include "lcupdatenotifier.h"
 #include <QFile>
 #include <QTextStream>
 #include "ai_data_include.h"
@@ -74,9 +75,12 @@ bool LCData::setWorkData(const QString &pname, const QString &well_group_name, c
 	_time_max = _time_depth_curve.first.back() + time_ext;
 	return true;
 }
-void LCData::setTimeDepthCurve( const QPair<QVector<float>, QVector<float>> &curve) 
+void LCData::setTimeDepthCurve( const QPair<QVector<float>, QVector<float>> &time_depth_curve) 
 { 
-	_time_depth_curve = curve; 
+	_time_depth_curve = time_depth_curve;
+	LCUpdateNotifier notifier;
+	notifier.setDataChangedFlag( LCENV::TimeDepthCurveChanged);
+	LCENV::MW->onUpdate(notifier);
 }
 
 float LCData::getTime(float depth) const
@@ -92,7 +96,7 @@ float LCData::getTime(float depth) const
 				time = time_vector[index - 1] + scale * (time_vector[index] - time_vector[index - 1]);
 			}
 			else {
-				time = time_vector.first();
+				time = 0.f;
 			}
 			break;
 		}
@@ -111,10 +115,81 @@ float LCData::getDepth(float time) const
 				depth = depth_vector[index - 1] + scale * (depth_vector[index] - depth_vector[index - 1]);
 			}
 			else {
-				depth = depth_vector.first();
+				depth = 0.f;
 			}
 			break;
 		}
 	}
 	return depth;
+}
+
+QVector<QPair<QVector<float>, QVector<float>>> LCData::wellSeismic(int il_num, int xl_num)
+{
+	aiDataWell *well_data = LCENV::MW->lcData()->wellData();
+	aiGridCrd well_coord = LCENV::MW->lcData()->survey()->Convert(well_data->GetPos());
+	aiDataSeismic *seis_data = LCENV::MW->lcData()->seismicData();
+	aiSampleRange sample_range = seis_data->GetSampleRange();
+	QVector<float> trace_buffer(sample_range.GetCount());
+	QVector<float> average_buffer(sample_range.GetCount());
+	std::fill(average_buffer.begin(), average_buffer.end(), 0);
+	QVector<QPair<QVector<float>, QVector<float>>> all_trace_data; /* inline + current + xline + average */
+
+	for (int cmp = well_coord.cmp - xl_num / 2; cmp <= well_coord.cmp + xl_num / 2; cmp++) {
+		if (cmp != well_coord.cmp) {
+			QPair<QVector<float>, QVector<float>> trace_data;
+			trace_data.first.resize(sample_range.GetCount());
+			trace_data.second.resize(sample_range.GetCount());
+			seis_data->ReadSample(aiGridCrd(well_coord.line, cmp), trace_data.second.data());
+			for (int sample_index = 0; sample_index < trace_data.second.size(); sample_index++) {
+				if (isnan(trace_data.second[sample_index])) {
+					trace_data.second[sample_index] = 0.f;
+				}
+				trace_data.first[sample_index] = sample_range.GetStart() + sample_range.GetStep() * sample_index;
+				average_buffer[sample_index] += trace_data.second[sample_index];
+			}
+			all_trace_data.push_back(trace_data);
+		}
+	}
+	{
+		QPair<QVector<float>, QVector<float>> trace_data;
+		trace_data.first.resize(sample_range.GetCount());
+		trace_data.second.resize(sample_range.GetCount());
+		seis_data->ReadSample(well_coord, trace_data.second.data());
+		for (int sample_index = 0; sample_index < trace_data.second.size(); sample_index++) {
+			if (isnan(trace_data.second[sample_index])) {
+				trace_data.second[sample_index] = 0.f;
+			}				
+			trace_data.first[sample_index] = sample_range.GetStart() + sample_range.GetStep() * sample_index;
+			average_buffer[sample_index] += trace_data.second[sample_index];
+		}
+		all_trace_data.push_back(trace_data);
+	}
+	for (int line = well_coord.line - il_num / 2; line <= well_coord.line + il_num / 2; line++) {
+		if (line != well_coord.line) {
+			QPair<QVector<float>, QVector<float>> trace_data;
+			trace_data.first.resize(sample_range.GetCount());
+			trace_data.second.resize(sample_range.GetCount());			
+			seis_data->ReadSample(aiGridCrd(line, well_coord.cmp), trace_data.second.data());
+			for (int sample_index = 0; sample_index < trace_data.second.size(); sample_index++) {
+				if (isnan(trace_data.second[sample_index])) {
+					trace_data.second[sample_index] = 0.f;
+				}
+				trace_data.first[sample_index] = sample_range.GetStart() + sample_range.GetStep() * sample_index;
+				average_buffer[sample_index] += trace_data.second[sample_index];;
+			}
+			all_trace_data.push_back(trace_data);
+		}
+	}
+	{
+		QPair<QVector<float>, QVector<float>> trace_data;
+		trace_data.first = all_trace_data.first().first;
+		trace_data.second.resize(sample_range.GetCount());
+		int trace_num = il_num + xl_num - 1;
+		for (int sample_index = 0; sample_index < average_buffer.size(); sample_index++) {
+			trace_data.second[sample_index] = average_buffer[sample_index] / trace_num;
+		}
+
+		all_trace_data.push_back(trace_data);
+	}
+	return all_trace_data;
 }

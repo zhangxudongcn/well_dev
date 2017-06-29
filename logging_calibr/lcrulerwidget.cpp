@@ -2,12 +2,13 @@
 
 #include "lcrulerwidget.h"
 #include "lcvalueaxis.h"
+#include "lclineardepthaxis.h"
 #include "lcdefine.h"
 #include "lcupdatenotifier.h"
 #include "lcdata.h"
 #include "lcmainwindow.h"
 #include "lcrulercontainer.h"
-#include <QGraphicsTextItem>
+#include <QGraphicsSimpleTextItem>
 #define DefaultRulerWidthMM 15.
 LCRulerWidget::LCRulerWidget(Qt::Alignment align, QWidget *parent) 
 	: LCGraphicsView(parent), _align(align), _scene(new QGraphicsScene()), _axis( nullptr )
@@ -15,35 +16,21 @@ LCRulerWidget::LCRulerWidget(Qt::Alignment align, QWidget *parent)
 	setVerticalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setHorizontalScrollBarPolicy(Qt::ScrollBarAlwaysOff);
 	setScene(_scene);
-	_axis = new LCValueAxis();
 }
 LCRulerWidget::~LCRulerWidget()
 {
 }
 
 void LCRulerWidget::onUpdate(const LCUpdateNotifier &update_notifier)
-{		
-	if (_align == Qt::AlignLeft) {
-		axis()->setRange( LCENV::MW->lcData()->timeMin() * 1000, LCENV::MW->lcData()->timeMax() * 1000);
-		double tick_min = (int(LCENV::MW->lcData()->timeMin() * 1000 / 100)) * 100;
-		double tick_max = (int(LCENV::MW->lcData()->timeMax() * 1000 / 100)) * 100;
-		axis()->setTick(tick_min, tick_max, 100);
-		setRuler();
-	}
-	if (_align == Qt::AlignRight) {
-		axis()->setRange(LCENV::MW->lcData()->timeMin() * 1000, LCENV::MW->lcData()->timeMax() * 1000);
-		double tick_min = (int(LCENV::MW->lcData()->timeMin() * 1000 / 100)) * 100;
-		double tick_max = (int(LCENV::MW->lcData()->timeMax() * 1000 / 100)) * 100;
-		axis()->setTick(tick_min, tick_max, 100);
-		setRuler();
-	}
+{
+	setRuler();
 }
 
 void LCRulerWidget::optionsChanged()
 {
 
 }
-void LCRulerWidget::setAxis(LCValueAxis *axis)
+void LCRulerWidget::setAxis(LCLinearAxis *axis)
 {
 	if (axis != _axis) {
 		delete _axis;
@@ -64,7 +51,11 @@ void LCRulerWidget::setRuler()
 		scene_rect.setLeft(0);
 		scene_rect.setRight( ((LCRulerContainer*)parent())->widthCM() * LCENV::PixelPerCM);
 		scene_rect.setTop( _axis->rangeMin() );
-		scene_rect.setBottom( _axis->rangeMax());
+		scene_rect.setBottom(_axis->rangeMax());// set y scale
+		QSettings &options = LCENV::MW->lcOptions();
+		float ms_per_cm = options.value("Seismic/MSPerCM").toFloat();
+		float y_scale = LCENV::PixelPerCM / ms_per_cm;
+		scale(1.0, y_scale);
 	}
 	else {
 		scene_rect.setLeft(_axis->rangeMin());
@@ -75,20 +66,22 @@ void LCRulerWidget::setRuler()
 	_scene->setSceneRect(scene_rect);
 	switch (_align) {
 	case Qt::AlignLeft: {
-		for (double value = _axis->tickMin(); value <= _axis->tickMax(); value += _axis->tickStep()) {
-			_scene->addLine( _scene->width() / 2, value, _scene->width(), value, QPen( Qt::black) );
-			QGraphicsTextItem *tick_item = _scene->addText(QString::number(value));
+		for (int tick_index = 0; tick_index < axis()->tickNum(); tick_index++) {
+			double tick_value = axis()->tickValue( tick_index );
+			_scene->addLine( _scene->width() / 2, tick_value, _scene->width(), tick_value, QPen( Qt::black, 0) );
+			QGraphicsSimpleTextItem *tick_item = _scene->addSimpleText( axis()->tickString(tick_index ));
 			QRectF br = tick_item->boundingRect();
-			tick_item->setPos( _scene->width() / 2 - br.width(), value - br.height() / 2);
+			tick_item->setPos( _scene->width() / 2 - br.width(), tick_value - br.height() / 2);
 		}
 		break;
 	}
 	case Qt::AlignRight: {
-		for (double value = _axis->tickMin(); value <= _axis->tickMax(); value += _axis->tickStep()) {
-			_scene->addLine(0, value, _scene->width() / 2, value, QPen(Qt::black, 0));
-			QGraphicsTextItem *tick_item = _scene->addText(QString::number(value));
+		for (int tick_index = 0; tick_index < axis()->tickNum(); tick_index++) {
+			double tick_value = axis()->tickValue(tick_index);
+			_scene->addLine(0, tick_value, _scene->width() / 2, tick_value, QPen(Qt::black, 0));
+			QGraphicsSimpleTextItem *tick_item = _scene->addSimpleText(axis()->tickString(tick_index));
 			QRectF br = tick_item->boundingRect();
-			tick_item->setPos(_scene->width() / 2, value - br.height() / 2);
+			tick_item->setPos(_scene->width() / 2, tick_value - br.height() / 2);
 		}
 		break;
 	}

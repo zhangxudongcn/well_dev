@@ -36,7 +36,7 @@ float LCSeismicContainer::widthCM() const
 	QSettings &options = LCENV::MW->lcOptions();
 	float width_one_trace = 1 / options.value("Seismic/TracesPerCM").toFloat();
 	int trace_num = options.value("WellSeismic/TraceNum").toInt();
-	float margin = options.value("WellSeismic/Margin").toFloat();
+	float margin = options.value("Seismic/Margin").toFloat();
 	float container_width_cm = width_one_trace * ( trace_num + 1 ) + margin * 2;
 	return container_width_cm;
 }

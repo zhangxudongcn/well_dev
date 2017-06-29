@@ -103,14 +103,29 @@ QVector<float> reflectivities(const QVector<float> &impedance)
 	for (int index = 0; index < result.size(); index++) {
 		result[index] = (impedance[index + 1] - impedance[index]) / (impedance[index + 1] + impedance[index]);
 	}
-	result.push_back(result.back());
+	result.push_back(0.f);
 	return result;
+}
+
+void getricker( int nt, float dt, int fpeak, float *wavelet )
+{
+	int it;
+	float   t1, t0;
+
+	t0 = 1.0 / fpeak;
+
+	for (it = -nt/2; it <= nt/2; it++) {
+		t1 = it*dt;
+		wavelet[it+nt/2] = exp(-PI*PI*fpeak*fpeak*(t1)*(t1))*
+			(1.0 - 2.*PI*PI*fpeak*fpeak*(t1)*(t1));
+	}
 }
 
 QVector<float> rickerWavelet(int nt, float dt, float fpeak)
 {
 	QVector<float> wavelet( nt );
-	ricker1_wavelet( nt,  dt,  fpeak, wavelet.data());
+	//ricker1_wavelet( nt,  dt,  fpeak, wavelet.data());
+	getricker(nt, dt, fpeak, wavelet.data());
 	return wavelet;
 }
 
@@ -123,23 +138,33 @@ QPair<QVector<float>, QVector<float>> uniformResampleTimes(const QVector<float> 
 	QVector<float> output_times;
 	QVector<float> output_values;
 
-	output_times.push_back(input_times.first());
+	output_times.push_back(0.f);
 	output_values.push_back(input_values.first());
+	int prev_ori_index = 1;
+	if (fabs(input_times.first()) < 0.000001) {
+		prev_ori_index = 0;
+	}
 
 	int result_index = 1;
-	int prev_ori_index = 0;
-	for  ( int ori_index = 1; ori_index < input_times.size(); ori_index++ ) {
+	float prev_time = 0.f;
+	float prev_value = input_values.first();
+	
+	for  ( int ori_index = prev_ori_index; ori_index < input_times.size(); ori_index++ ) {
 		float time = result_index * dt;
 		if ( input_times[ori_index] >= time ) {
-			float scale = (time - input_times[ori_index - 1]) / (input_times[ori_index] - input_times[ori_index-1]);
-			float value = input_values[ori_index - 1] + scale * (input_values[ori_index] - input_values[ori_index - 1]);
-			output_times.push_back(time);
-			output_values.push_back(value);
-			result_index++;
-			prev_ori_index = ori_index;
+			do {
+				float scale = (time - prev_time ) / (input_times[ori_index] - prev_time );
+				float value = prev_value + scale * (input_values[ori_index] - prev_value);
+				output_times.push_back(time);
+				output_values.push_back(value);
+				result_index++;
+				time = result_index * dt;
+			} while (time <= input_times[ori_index]);
+			prev_time = input_times[ori_index];
+			prev_value = input_values[ori_index];
 		}
 	}
-	if (prev_ori_index < input_times.size() - 1) {
+	if (output_times.back() < input_times.back() ) {
 		output_times.push_back(output_times.back() + dt );
 		output_values.push_back(output_values.back());
 	}

@@ -71,7 +71,7 @@ void LCMainWindow::fileOpenSlot()
 }
 void LCMainWindow::onUpdate(const LCUpdateNotifier &update_notifier)
 {
-	if (update_notifier.dataChangedFlag() | LCENV::CurrentWellChanged) {
+	if (update_notifier.dataChangedFlag() & LCENV::CurrentWellChanged) {
 		setWidget();
 	}
 	if (_well_main_widget) {
@@ -97,15 +97,18 @@ void LCMainWindow::setDefaultOptions()
 
 	_lc_options.setValue("Seismic/DrawWiggle", true);
 	_lc_options.setValue("Seismic/FillWiggle", 1);
-	_lc_options.setValue("Seismic/TracesPerCM", 10);
-	_lc_options.setValue("Seismic/MSPerCM", 100);
+	_lc_options.setValue("Seismic/TracesPerCM", 5);
+	_lc_options.setValue("Seismic/MSPerCM", 50);
 	_lc_options.setValue("Seismic/MaxExtTrace", 1.5);
+	_lc_options.setValue("Seismic/Margin", 0.5);
 
 	_lc_options.setValue("Synthetic/TraceNum", 10);
 	_lc_options.setValue("Synthetic/Gap", 0.5);
-	_lc_options.setValue("Synthetic/Margin", 0.5);
+	_lc_options.setValue("Synthetic/Color", 0x0);
 
-	_lc_options.setValue("WellSeismic/TraceNum", 9);
-	_lc_options.setValue("WellSeismic/Margin", 0.5);
+	_lc_options.setValue("WellSeismic/ILTraceNum", 5);
+	_lc_options.setValue("WellSeismic/XLTraceNum", 5);
+	_lc_options.setValue("WellSeismic/Color", 0x0);
+	_lc_options.setValue("AverageTrace/Color", 0xFF0000);
 
 }

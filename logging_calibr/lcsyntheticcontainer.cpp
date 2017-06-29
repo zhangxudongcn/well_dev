@@ -35,7 +35,7 @@ float LCSyntheticContainer::widthCM() const
 	float width_one_trace = 1 / options.value("Seismic/TracesPerCM").toFloat();
 	int trace_num = options.value("Synthetic/TraceNum").toInt();
 	float gap = options.value("Synthetic/Gap").toFloat();
-	float margin = options.value("Synthetic/Margin").toFloat();
+	float margin = options.value("Seismic/Margin").toFloat();
 	float container_width_cm = width_one_trace * trace_num * 2 + gap + margin * 2;
 	return container_width_cm;
 }

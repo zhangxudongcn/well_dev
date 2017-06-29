@@ -46,6 +46,7 @@ void LCValueAxis::setMinorTickCount( int count )
 		_minor_tick_count = count;
 	}
 }
+
 void LCValueAxis::setMinorTickLenMM(double len)
 {
 	_minor_tick_len_mm = len;

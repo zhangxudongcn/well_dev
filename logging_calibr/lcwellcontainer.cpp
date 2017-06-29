@@ -22,19 +22,19 @@ LCWellContainer::~LCWellContainer()
 float LCWellContainer::widthCM() const
 {
 	QSettings &options = LCENV::MW->lcOptions();
-	return options.value("CurveWidth").toFloat() * _curves.size();
+	return options.value("CurveWidth").toFloat() * _curve_containers.size();
 }
 
 
 void LCWellContainer::onUpdate(const LCUpdateNotifier &update_notifier)
 {
-	if (update_notifier.dataChangedFlag() | LCENV::CurrentWellChanged) {
+	if (update_notifier.dataChangedFlag() & LCENV::CurrentWellChanged) {
 		aiDataWell *well_data = LCENV::MW->lcData()->wellData();
 		// remove curve
-		for (auto &curve : _curves) {
+		for (auto &curve : _curve_containers) {
 			delete curve;
 		}
-		_curves.clear();
+		_curve_containers.clear();
 		if (layout() != nullptr) {
 			delete layout();
 		}
@@ -43,15 +43,22 @@ void LCWellContainer::onUpdate(const LCUpdateNotifier &update_notifier)
 		layout->setSpacing(0);
 
 		// create curve container
-		QStringList names = well_data->GetCurveNames();
-		for (int index = 1; index < names.size(); index++) {
-			LCCurveContainer *curve_container = new LCCurveContainer();
-			_curves.push_back(curve_container);
-			layout->addWidget(curve_container);
-			curve_container->setCurve(names[index]);			
-			curve_container->onUpdate(update_notifier);
+		QStringList curve_names = well_data->GetCurveNames();
+		for (const auto &name : curve_names) {
+			if (well_data->GetCurve(name).size() > 0) { /* 只绘制系统预定义的曲线 */
+				LCCurveContainer *curve_container = new LCCurveContainer();
+				_curve_containers.push_back(curve_container);
+				layout->addWidget(curve_container);
+				curve_container->setCurve( name );
+				curve_container->onUpdate(update_notifier);
+			}
 		}
 		setLayout(layout);
+	}
+	if (update_notifier.dataChangedFlag() & LCENV::TimeDepthCurveChanged) {
+		for (auto &well_container : _curve_containers) {
+			well_container->onUpdate(update_notifier);
+		}
 	}
 }
 
@@ -65,7 +72,7 @@ void LCWellContainer::setWell()
 
 void LCWellContainer::setDeviceYValue(int value)
 {
-	for (auto &curve : _curves) {
+	for (auto &curve : _curve_containers) {
 		curve->curveWidget()->verticalScrollBar()->setValue(value);
 	}
 }

@@ -17,7 +17,7 @@ public:
 	double labelMax() const { return _label_max; }
 	double labelStep() const { return _label_step; }
 	void setLabel(double label_min, double label_max, double label_step);
-
+	virtual double labelLoc(int index) const { return _label_min + _label_step * index; }
 
 	int minorTickCount() const { return _minor_tick_count; }
 	void setMinorTickCount(int count);
@@ -28,6 +28,7 @@ private:
 	double _tick_min, _tick_max, _tick_step;
 	double _tick_len_mm;
 	double _label_min, _label_max, _label_step;
-	int _minor_tick_count;	
+	bool _depth_label;
+	int _minor_tick_count;
 	double _minor_tick_len_mm;
 };
