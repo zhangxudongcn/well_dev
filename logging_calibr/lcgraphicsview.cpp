@@ -4,7 +4,6 @@
 
 LCGraphicsView::LCGraphicsView(QWidget *parent) : QGraphicsView(parent)
 {
-
 }
 LCGraphicsView::~LCGraphicsView()
 {}
