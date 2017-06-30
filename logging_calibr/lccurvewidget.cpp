@@ -39,14 +39,6 @@ void LCCurveWidget::setCurvePoints(const QPolygonF &curve_points)
 {
 
 }
-void LCCurveWidget::setVertAxis(const LCValueAxis &axis)
-{
-
-}
-void LCCurveWidget::setHoriAxis(const LCValueAxis &axis)
-{
-
-}
 void LCCurveWidget::onUpdate(const LCUpdateNotifier &update_notifier)
 {
 	if (update_notifier.dataChangedFlag() & LCENV::CurrentWellChanged) {

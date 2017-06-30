@@ -16,7 +16,6 @@ public:
 	void setAxis(LCLinearAxis *axis);
 	virtual void onUpdate(const LCUpdateNotifier &update_notifier);
 	virtual void optionsChanged();
-protected:
 	virtual void setRuler();
 private:
 	Qt::Alignment _align;
