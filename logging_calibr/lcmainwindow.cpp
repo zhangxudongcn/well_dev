@@ -22,14 +22,18 @@
 
 LCMainWindow::LCMainWindow(QWidget *parent)
 	: QMainWindow(parent), _lc_options("LC", "ZXD"), _global_label(nullptr), _well_main_widget(nullptr), _lc_data( nullptr )
-{
+{	
+
 	LCENV::MW = this;
 	ui.setupUi(this);
+	setDefaultOptions();
+
 	_global_h_layout = new QHBoxLayout();		
 	_global_label = new QLabel("No Well", this);
+
+
 	_global_h_layout->addWidget(_global_label);
 	ui._central_widget->setLayout(_global_h_layout);
-	setDefaultOptions();
 }
 
 LCMainWindow::~LCMainWindow()
@@ -85,7 +89,7 @@ void LCMainWindow::optionsChanged()
 void LCMainWindow::setDefaultOptions()
 {
 	_lc_options.setValue("GlobalTitleHeight", 2.);
-	_lc_options.setValue("WorkTitleHeight", 4);
+	_lc_options.setValue("WorkTitleHeight", 3);
 	_lc_options.setValue("TimeAxisExt", 0.4); /* s */
 
 	_lc_options.setValue("Ruler/RulerWidth", 3.);

@@ -19,8 +19,12 @@ LCWellMainWidget::LCWellMainWidget(QWidget *parent) : QWidget(parent)
 {
 	_global_v_layout = new QVBoxLayout();
 	_global_label = new QLabel(this);
-	_global_label->setText("GeoEast");
+
+	_global_label->setText("LC");
 	_global_v_layout->addWidget(_global_label);
+	QSettings &options = LCENV::MW->lcOptions();
+	float label_height_cm = options.value("GlobalTitleHeight").toFloat();
+	_global_label->setFixedHeight(label_height_cm * LCENV::PixelPerCM);
 
 	_ruler_layout = new QHBoxLayout();
 	_left_ruler = new LCRulerContainer(Qt::AlignLeft, this);

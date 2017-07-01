@@ -1,5 +1,11 @@
+#include "stdafx.h"
 #include "lcxorwidget.h"
-LCXorWidget::LCXorWidget( QWidget *parent, Qt::windowFlags f )
+
+LCXorWidget::LCXorWidget(QWidget *parent) : QChartView(parent)
 {
-    
+
+}
+LCXorWidget::~LCXorWidget()
+{
+
 }
