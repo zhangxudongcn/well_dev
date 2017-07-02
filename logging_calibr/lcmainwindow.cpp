@@ -12,6 +12,7 @@
 #include "lcrulerwidget.h"
 #include "lcrulertitle.h"
 #include "lcwellmainwidget.h"
+#include "lcxorcontainer.h"
 #include "ai_data_include.h"
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -52,6 +53,13 @@ void LCMainWindow::setWidget()
 	}
 	_well_main_widget = new LCWellMainWidget(this);
 	_global_h_layout->addWidget(_well_main_widget);
+	// set dock workarea 
+	_xor_container = new LCXorContainer();
+	QDockWidget *dockWidget = new QDockWidget(tr("Correlation"), this);
+	dockWidget->setAllowedAreas(Qt::RightDockWidgetArea);
+	dockWidget->setWidget(_xor_container);
+	addDockWidget(Qt::RightDockWidgetArea, dockWidget);
+
 }
 void LCMainWindow::resetWidget()
 {
@@ -92,7 +100,7 @@ void LCMainWindow::setDefaultOptions()
 	_lc_options.setValue("WorkTitleHeight", 3);
 	_lc_options.setValue("TimeAxisExt", 0.4); /* s */
 
-	_lc_options.setValue("Ruler/RulerWidth", 3.);
+	_lc_options.setValue("Ruler/RulerWidth", 2.);
 
 	_lc_options.setValue("Tops/TopsWidth", 2.);
 

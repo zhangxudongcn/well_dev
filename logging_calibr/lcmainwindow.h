@@ -10,6 +10,7 @@ class QHBoxLayout;
 class QLabel;
 class LCWellMainWidget;
 class LCData;
+class LCXorContainer;
 
 class LCMainWindow : public QMainWindow
 {
@@ -37,4 +38,5 @@ private:
 	LCWellMainWidget *_well_main_widget;
 	LCData *_lc_data;
 	QSettings _lc_options;
+	LCXorContainer *_xor_container;
 };
