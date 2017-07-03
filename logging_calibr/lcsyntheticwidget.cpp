@@ -12,6 +12,7 @@
 #include "ai_data_include.h"
 #include <math.h>
 extern "C" void convolve_wavelet(int wavelet_type, int nx, int nt, float dt, float fpeak, float **wfieldx);
+extern "C" void convolve_cwp(int lx, int ifx, float *x, int ly, int ify, float *y,	int lz, int ifz, float *z);
 LCSyntheticWidget::LCSyntheticWidget(QWidget *parent) 
 	: LCGraphicsView(parent), _scene(new QGraphicsScene()), _synthetic_group( nullptr ), _average_group( nullptr )
 {
@@ -174,7 +175,7 @@ void LCSyntheticWidget::setAverageSeismic()
 
 }
 
-QPair<QVector<float>, QVector<float>>  LCSyntheticWidget::syntheticTrace() const
+LCTrace  LCSyntheticWidget::syntheticTrace() const
 {
 	aiDataWell *well_data = LCENV::MW->lcData()->wellData();
 
@@ -190,23 +191,30 @@ QPair<QVector<float>, QVector<float>>  LCSyntheticWidget::syntheticTrace() const
 		imped = impedance(sonic, rhob);
 	}
 	
+	/* get wavelet */
+	LCWavelet wavelet = LCENV::MW->lcData()->currentWavelet();
 	/* 进行均匀采样 */
 	aiDataSeismic *seis_data = LCENV::MW->lcData()->seismicData();
 	aiSampleRange sample_range = seis_data->GetSampleRange();
 	float sample_interval = sample_range.GetStep() / 1000.f; /* ms->s */
-	QPair<QVector<float>, QVector<float>> time_depth_curve = LCENV::MW->lcData()->timeDepthCurve();
-	QPair<QVector<float>, QVector<float >> resample_imped = uniformResampleTimes(time_depth_curve.first, imped, sample_interval);
+	LCTimeDepthCurve time_depth_curve = LCENV::MW->lcData()->currentTimeDepthCurve();
+	LCTrace resample_imped = uniformResampleTimes(time_depth_curve.first, imped, sample_interval);
+	LCTrace resample_wavelet = uniformResampleTimes(wavelet.first, wavelet.second, sample_interval);
 
 	QVector<float> resample_refl = reflectivities(resample_imped.second);
 
+	QVector<float> trace_out( resample_refl.size() );
+	convolve_cwp(resample_refl.size(), 0, resample_refl.data(), resample_wavelet.second.size(), 0, resample_wavelet.second.data(), trace_out.size(), 0, trace_out.data());
+#if 0	
 	float *buffer = new float[resample_refl.size()];
 	memcpy(buffer, resample_refl.data(), sizeof(float) * resample_refl.size());
 	convolve_wavelet(2, 1, resample_refl.size(), sample_interval, 30, &buffer);
 	memcpy(resample_refl.data(), buffer, sizeof(float) * resample_refl.size());
 	delete[]buffer;
-	resample_refl.first() = 0.f;
-	resample_refl.back() = 0.f;
-	return QPair<QVector<float>, QVector<float>>(resample_imped.first, resample_refl);
+#endif
+	trace_out.first() = 0.f;
+	trace_out.back() = 0.f;
+	return QPair<QVector<float>, QVector<float>>(resample_imped.first, trace_out);
 }
 
 void LCSyntheticWidget::setTops()

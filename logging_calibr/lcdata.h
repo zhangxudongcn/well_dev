@@ -25,8 +25,21 @@ public:
 	aiDataSurvey *survey() const { return _survey; }
 	aiDataSeismic *seismicData() const { return _seis_data; }
 	float replaceVelocity() const { return _replace_velocity; }
-	LCTimeDepthCurve timeDepthCurve() const { return _time_depth_curve; }	
-	void setTimeDepthCurve( const LCTimeDepthCurve &curve);
+
+	LCTimeDepthCurve currentTimeDepthCurve() const;
+	int currentTimeDepthCurveIndex() const { return _current_time_depth_curve_index; }
+	void setCurrentTimeDepthCurveIndex(int index);
+	const QVector<LCTimeDepthCurve> &timeDepthCurveArray() const { return _time_depth_curve_array; }
+	void addTimeDepthCurve( const LCTimeDepthCurve &curve);
+	void setCurrentTimeDepthCurve(const LCTimeDepthCurve &curve);
+
+	LCWavelet currentWavelet() const;
+	int currentWaveletIndex() const { return _current_wavelet_index; }
+	void setCurrentWaveletIndex(int index);
+	const QVector<LCWavelet> &waveletArray() const { return _wavelet_array; }
+	void addWavelet(const LCWavelet &wavelet);
+	void setCurrentWavelet(const LCWavelet &wavelet);
+
 	float getTime(float depth) const;
 	float getDepth(float time) const;
 	float timeMin() const { return _time_min; }
@@ -41,6 +54,9 @@ private:
 	aiDataSurvey *_survey;
 	aiDataSeismic *_seis_data;
 	float _replace_velocity;
-	LCTimeDepthCurve _time_depth_curve; /* s, m*/
+	QVector<LCTimeDepthCurve> _time_depth_curve_array; /* s, m*/
+	int _current_time_depth_curve_index;
+	QVector<LCWavelet> _wavelet_array;
+	int _current_wavelet_index;
 	float _time_min, _time_max;
 };

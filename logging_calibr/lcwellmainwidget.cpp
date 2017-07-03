@@ -72,7 +72,7 @@ void LCWellMainWidget::onUpdate(const LCUpdateNotifier &update_notifier)
 	_left_ruler->onUpdate(update_notifier);
 	_work_container->onUpdate(update_notifier);
 	if (update_notifier.dataChangedFlag() & LCENV::CurrentWellChanged) {
-		QPair<QVector<float>, QVector<float>> time_depth_curve = LCENV::MW->lcData()->timeDepthCurve();
+		LCTimeDepthCurve time_depth_curve = LCENV::MW->lcData()->currentTimeDepthCurve();
 		_right_ruler->rulerWidget()->axis()->setRange(LCENV::MW->lcData()->timeMin() * 1000, LCENV::MW->lcData()->timeMax() * 1000);
 		double tick_min = (int(time_depth_curve.second.first() / 100)) * 100;
 		double tick_max = (int(time_depth_curve.second.back() / 100)) * 100;

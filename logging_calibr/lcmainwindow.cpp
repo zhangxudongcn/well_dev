@@ -96,7 +96,7 @@ void LCMainWindow::optionsChanged()
 
 void LCMainWindow::setDefaultOptions()
 {
-	_lc_options.setValue("GlobalTitleHeight", 2.);
+	_lc_options.setValue("GlobalTitleHeight", 1.);
 	_lc_options.setValue("WorkTitleHeight", 3);
 	_lc_options.setValue("TimeAxisExt", 0.4); /* s */
 

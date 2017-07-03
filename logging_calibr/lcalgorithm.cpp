@@ -2,6 +2,7 @@
 #include "lcalgorithm.h"
 #define _USE_MATH_DEFINES
 #include <math.h>
+#include "lcdefine.h"
 #include "cwp.h"
 #include "par.h"
 
@@ -63,7 +64,7 @@ sonic: us / m
 replace_velocity: m / s
 return time: s  depth: m
 */
-QPair<QVector<float>, QVector<float>> depthToTime(const QVector<float> &depth, const QVector<float> &sonic, float replace_velocity)
+LCTimeDepthCurve depthToTime(const QVector<float> &depth, const QVector<float> &sonic, float replace_velocity)
 {
 	QVector<float> time, new_depth;
 	float prev_depth = 0.f;
@@ -76,7 +77,7 @@ QPair<QVector<float>, QVector<float>> depthToTime(const QVector<float> &depth, c
 		prev_vel = 1000000.f / sonic[index];
 		prev_time = t;
 	}
-	return QPair<QVector<float>, QVector<float>>( time, depth );
+	return LCTimeDepthCurve( time, depth );
 }
 
 /*
@@ -121,11 +122,19 @@ void getricker( int nt, float dt, int fpeak, float *wavelet )
 	}
 }
 
-QVector<float> rickerWavelet(int nt, float dt, float fpeak)
+LCWavelet rickerWavelet(int nt, float dt, float fpeak)
 {
-	QVector<float> wavelet( nt );
-	//ricker1_wavelet( nt,  dt,  fpeak, wavelet.data());
-	getricker(nt, dt, fpeak, wavelet.data());
+	QVector<float> time(nt);
+	QVector<float> value( nt );
+	ricker1_wavelet( nt,  dt,  fpeak, value.data());
+	for (int index = 0; index < nt; index++) {
+		time[index] = index * dt;
+	}
+	//getricker(nt, dt, fpeak, wavelet.data());
+	LCWavelet wavelet(time, value);
+	wavelet.setDesc(QString::number(fpeak) + "Hz ricker wavelet");
+	wavelet.setFPeak(fpeak);
+	wavelet.setSampleInterval(dt);
 	return wavelet;
 }
 

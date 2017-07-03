@@ -1,5 +1,6 @@
 #pragma once
 #include "lcgraphicsview.h"
+#include "lcdefine.h"
 #include <QList>
 class LCUpdateNotifier;
 class LCTopItem;
@@ -16,7 +17,7 @@ protected:
 	void setAverageSeismic();
 
 	void setTops();
-	QPair<QVector<float>, QVector<float>>  syntheticTrace() const;
+	LCTrace syntheticTrace() const;
 private:
 	QGraphicsScene *_scene;	
 	LCTraceItemGroup *_synthetic_group;

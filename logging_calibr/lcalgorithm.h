@@ -1,4 +1,5 @@
 #pragma once
+#include "lcdefine.h"
 #include <QVector>
 #include <QPolygonF>
 #include <QPair>
@@ -6,11 +7,11 @@
 extern QVector<float> fillInvalid(const QVector<float> ori_vector);
 extern QVector<float> VpToRHOB(const QVector<float> &sonic);
 
-extern QPair<QVector<float>, QVector<float>> depthToTime(const QVector<float> &depth, const QVector<float> &sonic, float replace_velocity);
+extern LCTimeDepthCurve depthToTime(const QVector<float> &depth, const QVector<float> &sonic, float replace_velocity);
 
 extern QVector<float> impedance(const QVector<float> &sonic, const QVector<float> &rhob );
 
-extern QVector<float> rickerWavelet(int nt, float dt, float fpeak);
+extern LCWavelet rickerWavelet(int nt, float dt, float fpeak);
 
 extern QVector<float> reflectivities(const QVector<float> &impedance);
 

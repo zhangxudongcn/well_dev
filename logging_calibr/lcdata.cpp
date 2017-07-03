@@ -9,7 +9,7 @@
 #include <QTextStream>
 #include "ai_data_include.h"
 
-LCData::LCData() : _project(nullptr), _well_group(nullptr), _well_data(nullptr), _survey(nullptr), _seis_data(nullptr), _replace_velocity(-1)
+LCData::LCData() : _project(nullptr), _well_group(nullptr), _well_data(nullptr), _survey(nullptr), _seis_data(nullptr), _replace_velocity(-1), _current_time_depth_curve_index(-1)
 {
 }
 LCData::~LCData()
@@ -67,26 +67,88 @@ bool LCData::setWorkData(const QString &pname, const QString &well_group_name, c
 	QVector<float> depth_vector = _well_data->GetDepth();
 	QVector<float> sonic_vector = fillInvalid( _well_data->GetSonic() );
 
-	setTimeDepthCurve( depthToTime(depth_vector, sonic_vector, replace_velocity) );
+	addTimeDepthCurve( depthToTime(depth_vector, sonic_vector, replace_velocity) );
 
 	QSettings &options = LCENV::MW->lcOptions();
 	float time_ext = options.value("TimeAxisExt").toFloat();
 	_time_min = 0.0f;
-	_time_max = _time_depth_curve.first.back() + time_ext;
+	_time_max = currentTimeDepthCurve().first.back() + time_ext;
+
+	// set default wavelet: 20Hz ricker wavelet
+	LCWavelet wavelet = rickerWavelet(400, 0.001, 20);
+	addWavelet(wavelet);
 	return true;
+}	
+LCTimeDepthCurve LCData::currentTimeDepthCurve() const
+{
+	LCTimeDepthCurve time_depth_curve;
+	if (currentTimeDepthCurveIndex() >= 0) {
+		time_depth_curve = _time_depth_curve_array[currentTimeDepthCurveIndex()];
+	}
+	return time_depth_curve;
 }
-void LCData::setTimeDepthCurve( const QPair<QVector<float>, QVector<float>> &time_depth_curve) 
+
+void LCData::setCurrentTimeDepthCurveIndex(int index)
+{
+	if (_current_time_depth_curve_index != index) {
+		_current_time_depth_curve_index = index;
+		LCUpdateNotifier notifier;
+		notifier.setDataChangedFlag(LCENV::TimeDepthCurveChanged);
+		LCENV::MW->onUpdate(notifier);
+	}
+}
+
+void LCData::addTimeDepthCurve( const LCTimeDepthCurve &time_depth_curve) 
 { 
-	_time_depth_curve = time_depth_curve;
+	_time_depth_curve_array.push_back( time_depth_curve );
+	_current_time_depth_curve_index = _time_depth_curve_array.size() - 1;
 	LCUpdateNotifier notifier;
-	notifier.setDataChangedFlag( LCENV::TimeDepthCurveChanged);
+	notifier.setDataChangedFlag(LCENV::TimeDepthCurveChanged);
+	LCENV::MW->onUpdate(notifier);
+}
+
+void LCData::setCurrentTimeDepthCurve(const LCTimeDepthCurve &curve)
+{
+	_time_depth_curve_array[_current_time_depth_curve_index] = curve;
+	LCUpdateNotifier notifier;
+	notifier.setDataChangedFlag(LCENV::TimeDepthCurveChanged);
+	LCENV::MW->onUpdate(notifier);
+}
+
+LCWavelet LCData::currentWavelet() const
+{
+	LCWavelet wavelet;
+	if (_current_wavelet_index >= 0) {
+		wavelet = _wavelet_array[_current_wavelet_index];
+	}
+	return wavelet;
+}
+
+void LCData::setCurrentWaveletIndex(int index)
+{
+	_current_wavelet_index = index;
+}
+
+void LCData::addWavelet(const LCWavelet &wavelet)
+{
+	_wavelet_array.push_back(wavelet);
+	_current_wavelet_index = _wavelet_array.size() - 1;
+	LCUpdateNotifier notifier;
+	notifier.setDataChangedFlag(LCENV::WaveletChanged);
+	LCENV::MW->onUpdate(notifier);
+}
+void LCData::setCurrentWavelet(const LCWavelet &wavelet)
+{
+	_wavelet_array[_current_wavelet_index] = wavelet;
+	LCUpdateNotifier notifier;
+	notifier.setDataChangedFlag(LCENV::WaveletChanged);
 	LCENV::MW->onUpdate(notifier);
 }
 
 float LCData::getTime(float depth) const
 {
-	QVector<float> time_vector = _time_depth_curve.first;
-	QVector<float> depth_vector = _time_depth_curve.second;
+	QVector<float> time_vector = currentTimeDepthCurve().first;
+	QVector<float> depth_vector = currentTimeDepthCurve().second;
 
 	float time = LCENV::InvalidTime;
 	for (int index = 0; index < depth_vector.size(); index++) {
@@ -105,8 +167,8 @@ float LCData::getTime(float depth) const
 }
 float LCData::getDepth(float time) const
 {
-	QVector<float> time_vector = _time_depth_curve.first;
-	QVector<float> depth_vector = _time_depth_curve.second;
+	QVector<float> time_vector = currentTimeDepthCurve().first;
+	QVector<float> depth_vector = currentTimeDepthCurve().second;
 	float depth = LCENV::InvalidTime;
 	for (int index = 0; index < time_vector.size(); index++) {
 		if (time_vector[index] >= time) {

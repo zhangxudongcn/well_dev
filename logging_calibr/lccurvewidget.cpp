@@ -93,7 +93,7 @@ void LCCurveWidget::setCurve()
 		delete _curve_item;
 		_curve_item = nullptr;
 	}
-	QPair<QVector<float>, QVector<float>> time_depth_curve = LCENV::MW->lcData()->timeDepthCurve();
+	LCTimeDepthCurve time_depth_curve = LCENV::MW->lcData()->currentTimeDepthCurve();
 	aiDataWell *well_data = LCENV::MW->lcData()->wellData();
 	QString curve_name = ((LCCurveContainer*)parent())->curveName();
 	QVector<float> curve_data = well_data->GetCurve(curve_name);
@@ -186,11 +186,11 @@ void LCCurveWidget::mouseMoveEvent(QMouseEvent *event)
 	}
 	if (event->modifiers() == Qt::ControlModifier && _mouse_press ) {
 		float time_offset_ms = scene_pos.y() - _prev_pos.y();
-		QPair<QVector<float>, QVector<float>> time_depth_curve = LCENV::MW->lcData()->timeDepthCurve();
+		LCTimeDepthCurve time_depth_curve = LCENV::MW->lcData()->currentTimeDepthCurve();
 		for (auto &time : time_depth_curve.first) {
 			time += time_offset_ms / 1000.f;
 		}
-		LCENV::MW->lcData()->setTimeDepthCurve(time_depth_curve);
+		LCENV::MW->lcData()->setCurrentTimeDepthCurve(time_depth_curve);
 		_prev_pos = scene_pos;
 	}
 	else {
