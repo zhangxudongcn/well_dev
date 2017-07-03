@@ -1,7 +1,11 @@
 #pragma once
+#include <QPair>
+#include <QVector>
 class LCMainWindow;
 class aiDataWellGroup;
 #define LCITEM 65537
+typedef QPair<QVector<float>, QVector<float>> LCTimeDepthCurve;
+typedef QPair<QVector<float>, QVector<float>> LCTrace;
 class LCENV {
 public:
 	enum DataChangeFlag { CurrentWellChanged = 0x1, TimeDepthCurveChanged = 0x2, TopChanged = 0x4, WaveletChanged = 0x8 };

@@ -20,12 +20,12 @@
      <x>0</x>
      <y>0</y>
      <width>600</width>
-     <height>23</height>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
-     <string>File</string>
+     <string>&amp;File</string>
     </property>
     <addaction name="action_open"/>
     <addaction name="action_quit"/>
@@ -41,8 +41,23 @@
     </property>
     <addaction name="action_Options"/>
    </widget>
+   <widget class="QMenu" name="menuData">
+    <property name="title">
+     <string>&amp;Wavelet</string>
+    </property>
+    <addaction name="actionWavelet"/>
+    <addaction name="actionTimeDepthCurve"/>
+   </widget>
+   <widget class="QMenu" name="menuTD">
+    <property name="title">
+     <string>&amp;TD</string>
+    </property>
+    <addaction name="actionUpdate_TD"/>
+   </widget>
    <addaction name="menuFile"/>
    <addaction name="menu_View"/>
+   <addaction name="menuData"/>
+   <addaction name="menuTD"/>
    <addaction name="menuTools"/>
   </widget>
   <widget class="QToolBar" name="mainToolBar">
@@ -67,6 +82,21 @@
   <action name="action_Options">
    <property name="text">
     <string>&amp;Options</string>
+   </property>
+  </action>
+  <action name="actionWavelet">
+   <property name="text">
+    <string>Update Wavelet</string>
+   </property>
+  </action>
+  <action name="actionTimeDepthCurve">
+   <property name="text">
+    <string>Wavelet Group</string>
+   </property>
+  </action>
+  <action name="actionUpdate_TD">
+   <property name="text">
+    <string>Update TD</string>
    </property>
   </action>
  </widget>
