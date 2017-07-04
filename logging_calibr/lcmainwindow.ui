@@ -6,29 +6,39 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>600</width>
-    <height>400</height>
+    <width>951</width>
+    <height>739</height>
    </rect>
   </property>
   <property name="windowTitle">
    <string>LCMainWindow</string>
   </property>
   <widget class="QWidget" name="_central_widget"/>
+  <widget class="QToolBar" name="mainToolBar">
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
   <widget class="QMenuBar" name="menuBar">
    <property name="geometry">
     <rect>
      <x>0</x>
      <y>0</y>
-     <width>600</width>
-     <height>23</height>
+     <width>951</width>
+     <height>24</height>
     </rect>
    </property>
    <widget class="QMenu" name="menuFile">
     <property name="title">
      <string>&amp;File</string>
     </property>
-    <addaction name="action_open"/>
-    <addaction name="action_quit"/>
+    <addaction name="_action_open"/>
+    <addaction name="_action_Save"/>
+    <addaction name="_action_quit"/>
    </widget>
    <widget class="QMenu" name="menu_View">
     <property name="title">
@@ -39,19 +49,13 @@
     <property name="title">
      <string>&amp;Tools</string>
     </property>
-    <addaction name="action_Options"/>
-   </widget>
-   <widget class="QMenu" name="menuData">
-    <property name="title">
-     <string>&amp;Wavelet</string>
-    </property>
-    <addaction name="actionWavelet"/>
+    <addaction name="_action_options"/>
    </widget>
    <widget class="QMenu" name="menuTD">
     <property name="title">
      <string>&amp;TD</string>
     </property>
-    <addaction name="actionUpdate_TD"/>
+    <addaction name="_action_update_td"/>
    </widget>
    <widget class="QMenu" name="menu_Well">
     <property name="title">
@@ -61,47 +65,42 @@
    <addaction name="menuFile"/>
    <addaction name="menu_View"/>
    <addaction name="menu_Well"/>
-   <addaction name="menuData"/>
    <addaction name="menuTD"/>
    <addaction name="menuTools"/>
   </widget>
-  <widget class="QToolBar" name="mainToolBar">
-   <attribute name="toolBarArea">
-    <enum>TopToolBarArea</enum>
-   </attribute>
-   <attribute name="toolBarBreak">
-    <bool>false</bool>
-   </attribute>
-  </widget>
-  <widget class="QStatusBar" name="statusBar"/>
-  <action name="action_quit">
+  <action name="_action_quit">
    <property name="text">
     <string>&amp;Quit</string>
    </property>
   </action>
-  <action name="action_open">
+  <action name="_action_open">
    <property name="text">
     <string>Open</string>
    </property>
   </action>
-  <action name="action_Options">
+  <action name="_action_options">
    <property name="text">
     <string>&amp;Options</string>
    </property>
   </action>
-  <action name="actionWavelet">
+  <action name="_action_update_wavelet">
    <property name="text">
     <string>Update Wavelet</string>
    </property>
   </action>
-  <action name="actionTimeDepthCurve">
+  <action name="_action_wavelet_group">
    <property name="text">
     <string>Wavelet Group</string>
    </property>
   </action>
-  <action name="actionUpdate_TD">
+  <action name="_action_update_td">
    <property name="text">
     <string>Update TD</string>
+   </property>
+  </action>
+  <action name="_action_Save">
+   <property name="text">
+    <string>&amp;Save</string>
    </property>
   </action>
  </widget>
@@ -111,7 +110,7 @@
  </resources>
  <connections>
   <connection>
-   <sender>action_quit</sender>
+   <sender>_action_quit</sender>
    <signal>triggered()</signal>
    <receiver>LCMainWindowClass</receiver>
    <slot>close()</slot>
@@ -127,7 +126,7 @@
    </hints>
   </connection>
   <connection>
-   <sender>action_open</sender>
+   <sender>_action_open</sender>
    <signal>triggered()</signal>
    <receiver>LCMainWindowClass</receiver>
    <slot>fileOpenSlot()</slot>
