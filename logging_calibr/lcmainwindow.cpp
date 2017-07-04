@@ -122,5 +122,4 @@ void LCMainWindow::setDefaultOptions()
 	_lc_options.setValue("WellSeismic/XLTraceNum", 5);
 	_lc_options.setValue("WellSeismic/Color", 0x0);
 	_lc_options.setValue("AverageTrace/Color", 0xFF0000);
-
 }
