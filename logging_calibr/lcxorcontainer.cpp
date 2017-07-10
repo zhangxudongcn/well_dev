@@ -19,7 +19,7 @@ LCXorContainer::~LCXorContainer()
 
 void LCXorContainer::onUpdate(const LCUpdateNotifier &update_notifier)
 {
-	if (update_notifier.dataChangedFlag() & LCENV::CurrentWellChanged) {
+	if (update_notifier.dataChangedFlag() & LCENV::CurrentWellChanged || update_notifier.dataChangedFlag() & LCENV::TimeDepthCurveChanged) {
 		setLagXorChart();
 	}
 }
@@ -35,6 +35,7 @@ void LCXorContainer::lagApplaySlot()
 
 void LCXorContainer::setLagXorChart()
 {
+	ui._lag_xor_chartview->chart()->removeAllSeries();
 	QSettings &options = LCENV::MW->lcOptions();
 
 	int il_num = options.value("WellSeismic/ILTraceNum").toInt();
@@ -74,9 +75,20 @@ void LCXorContainer::setLagXorChart()
 
 	memcpy(&ext_resample_refl[half_lag_num], &resample_refl[0], resample_refl.size() * sizeof(float));
 	QVector<float> trace_out(resample_refl.size());
-	for (int index = 0; index <= half_lag_num * 2 + 1; index++) {
+	QVector<float> xor_result(end_index - start_index + 1);
+	QVector<float> max_xor_array(half_lag_num * 2 + 1);
+	for (int index = 0; index < half_lag_num * 2 + 1; index++) {
 		convolve_cwp(resample_refl.size(), index, ext_resample_refl.data(), resample_wavelet.second.size(), 0, resample_wavelet.second.data(), trace_out.size(), 0, trace_out.data());
-
+		xcor(end_index - start_index + 1, start_index, trace_out.data(), end_index - start_index + 1, start_index, all_trace_data.back().second.data(),
+			end_index - start_index + 1, 0, xor_result.data());
+		std::sort(xor_result.begin(), xor_result.end() );
+		max_xor_array[index] = xor_result.back();
 	}
-}
+	QLineSeries *series = new QLineSeries();
 
+	for (int value = -ui._lag_range_spinbox->value(), index = 0; value <= ui._lag_range_spinbox->value(); value += sample_range.GetStep()) {
+		series->append(value, max_xor_array[index++]);
+	}
+	ui._lag_xor_chartview->chart()->addSeries(series);
+	ui._lag_xor_chartview->chart()->createDefaultAxes();
+}

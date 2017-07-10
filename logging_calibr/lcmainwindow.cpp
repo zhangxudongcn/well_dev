@@ -22,14 +22,14 @@
 #include "ai_data_include.h"
 
 LCMainWindow::LCMainWindow(QWidget *parent)
-	: QMainWindow(parent), _lc_options("LC", "ZXD"), _global_label(nullptr), _well_main_widget(nullptr), _lc_data( nullptr )
-{	
+	: QMainWindow(parent), _lc_options("LC", "ZXD"), _global_label(nullptr), _well_main_widget(nullptr), _lc_data(nullptr), _xor_container( nullptr )
+{
 
 	LCENV::MW = this;
 	ui.setupUi(this);
 	setDefaultOptions();
 
-	_global_h_layout = new QHBoxLayout();		
+	_global_h_layout = new QHBoxLayout();
 	_global_label = new QLabel("No Well", this);
 
 
@@ -73,7 +73,7 @@ void LCMainWindow::resetWidget()
 }
 
 void LCMainWindow::fileOpenSlot()
-{	
+{
 	_lc_data = new LCData();
 	if (_lc_data->setWorkData("H:/workspace/well_test/Project1.paip", "WellGroup1", "F02-1", "Survey1", "F3", 2000)) {
 		LCUpdateNotifier notifier;
@@ -89,7 +89,11 @@ void LCMainWindow::onUpdate(const LCUpdateNotifier &update_notifier)
 	if (_well_main_widget) {
 		_well_main_widget->onUpdate(update_notifier);
 	}
+	if (_xor_container) {
+		_xor_container->onUpdate(update_notifier);
+	}
 }
+
 void LCMainWindow::optionsChanged()
 {
 }
